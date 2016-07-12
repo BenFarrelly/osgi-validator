@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.255 sec <<< FAILURE! - in com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened
+testMethodsAreEqual(com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened)  Time elapsed: 0.014 sec  <<< FAILURE!
+java.lang.AssertionError: Iterator does not have next
+	at com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened.testMethodsAreEqual(TestCheckIfJarIsCorrectlyOpened.java:60)
+
+testMethodsAreNotEqual(com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened)  Time elapsed: 0.172 sec  <<< FAILURE!
+java.lang.AssertionError: Iterator does not have next
+	at com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened.testMethodsAreNotEqual(TestCheckIfJarIsCorrectlyOpened.java:84)
+

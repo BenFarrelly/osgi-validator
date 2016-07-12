@@ -21,7 +21,8 @@ import java.util.jar.JarFile;
  */
 public class JarToClasses {
 	public ArrayList<Class<?>> classes;
-	
+	//This boolean is used if only interface checking is selected.
+	boolean wantsInterfaces = false;
 //	public JarToClasses(JarFile jar){
 //		classes = new ArrayList<Class>();
 //		Enumeration<JarEntry> entries = jar.entries();
@@ -44,14 +45,19 @@ public class JarToClasses {
 			JarFile file = new JarFile(jar);
 			Enumeration<JarEntry> entries = file.entries();
 			
-			for(JarEntry entry = entries.nextElement(); entry != null; entry = entries.nextElement()){
+			for(JarEntry entry = entries.nextElement(); entry != null && entries.hasMoreElements(); entry = entries.nextElement()){
 				if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
 					//-6 because of .class
 					className = entry.getName().substring(0, entry.getName().length()-6)
 							.replace('/', '.');
 					
-					Class loadingAndAddingToMap = cl.loadClass(className);
-					classes.add(loadingAndAddingToMap);
+					Class<?> loadingAndAddingToMap = cl.loadClass(className);
+					//if interface checking only, confirm class is an interface. 
+					//If not using interface checking add regardless
+					if((wantsInterfaces && loadingAndAddingToMap.isInterface()) || !wantsInterfaces){
+						classes.add(loadingAndAddingToMap);
+					}
+					
 					
 					
 				}
