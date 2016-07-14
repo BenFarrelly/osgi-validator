@@ -65,6 +65,36 @@ public class MapAnalyser {
 		return methodEqualityMap;
 	}
 
+	
+	public static HashMap<Class<?>, HashMap<Method, ComparisonStatus>> updateJarAnalysis(ArrayList<Class<?>> classes1, ArrayList<Class<?>> classes2){
+		//This method takes the two Jar paths, then creates two map representations of these Jar files.
+		//After representations are made, analysis is conducted
+		
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = new HashMap<Class<?>, HashMap<Method, ComparisonStatus>>();
+		
+	//	Comparing classes and taking intersection of classes in Jar file
+		ArrayList<Class<?>> intersectionOfClasses = new ArrayList<Class<?>>();
+		for(int i = 0; i < classes1.size(); i++){
+			HashMap<Method, ComparisonStatus> methodComparison;
+			Class<?> class1 = classes1.get(i);
+			
+			for(int j = 0; j < classes2.size(); j++){
+				Class<?> class2 = classes2.get(j);
+				//if(className1.equals(jarClasses2.classes.get(j).getName() )){
+				if(isClassEqual(class1, classes2.get(j))){	
+					//Class is equal!
+					intersectionOfClasses.add(class1);
+				} else if(class1.getName().equals(class2.getName()) ){ //Class not equal, but names are the same
+					//TODO implement subtyping, write method which checks what is not equal, if because not exists
+					//fail quickly, if type mismatch, then employ subtyping.
+					methodComparison = methodComparator(class1, class2);
+					methodEqualityMap.put(class1, methodComparison);
+				}
+			//TODO implement	
+			}
+		}
+		return methodEqualityMap;
+	}
 	private static HashMap<Method, ComparisonStatus> methodComparator(Class<?> class1, Class<?> class2) {
 		//Hashmap used, which overwrites when "putting" to the same key. Need to check this works.
 		HashMap<Method, ComparisonStatus> methodComparison = new HashMap<Method, ComparisonStatus>();
@@ -87,10 +117,10 @@ public class MapAnalyser {
 						Class<?>[] parameters = method.getParameterTypes();
 						Class<?>[] parameters2 = method2.getParameterTypes();
 						
-						if((returnType1.getName() == returnType2.getName()) && 
-								areParamsEqual(parameters, parameters2) == ComparisonStatus.EQUAL){
+						if(returnType1.getName() == returnType2.getName()){ 
+								if(areParamsEqual(parameters, parameters2) == ComparisonStatus.EQUAL || (parameters.length == 0 && parameters2.length == 0)){
 							methodComparison.put(method, ComparisonStatus.EQUAL);
-							
+								}
 						} else if((returnType1.getTypeName() == returnType2.getTypeName()) && 
 								areParamsEqual(parameters, parameters2) == ComparisonStatus.NOT_EQUAL){
 							methodComparison.put(method, ComparisonStatus.NOT_EQUAL);
@@ -122,8 +152,8 @@ public class MapAnalyser {
 		if(params1.length == params2.length){
 			int correctTypeCount = 0;
 			//boolean[][] typeMatrix = new boolean[params1.length][params2.length];
-			for(int i = 0; i < params1.length-1; i++){
-				for(int j = 0; j < params2.length-1; i++){
+			for(int i = 0; i < params1.length; i++){
+				for(int j = 0; j < params2.length; j++){
 					if(params1[i].getName().equals(params2[j].getName())){
 						correctTypeCount++;
 						equalTypes.add(params2[j].getName());
@@ -173,9 +203,9 @@ public class MapAnalyser {
 		//TODO Create a list to hold onto the methods which are not in either class?
 		//Simple boolean check, designed to fast fail.
 		Method[] methods1 = class1.getDeclaredMethods();
-		
-		for(Method method : methods1){
-			try {
+		try {
+			for(Method method : methods1){
+				
 				if(class2.getDeclaredMethod(method.getName(), method.getParameterTypes()) != null){
 					Method methodExists = class2.getDeclaredMethod(method.getName(), method.getParameterTypes());
 					if(!methodExists.equals(method)){
@@ -187,23 +217,26 @@ public class MapAnalyser {
 				} else {
 					return false;
 				}
-			} catch (NoSuchMethodException e) {
-				// TODO Add logger
-				//In this case the method does not exist in the other class.
-				e.printStackTrace();
-				return false;
-				
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+
+			}//end for
+		} catch (NoSuchMethodException e) {
+			// TODO Add logger
+			//In this case the method does not exist in the other class.
+			//e.printStackTrace();
 			
-		}//end for
-		
+			return false;
+
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Start of errors");
+			e.printStackTrace();
+			
+		}
 		//if it makes it all the way through, it must be true
 		return true;	
 	}
-	
+
 	double classSimilarityRating(Class<?> class1, Class<?> class2){
 		//This class returns a simple double from (Number of equal methods)/(Number of methods)
 		Method[] methods = class1.getDeclaredMethods();

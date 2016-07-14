@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.validator.analysis.AnalysisStarter;
+import com.validator.analysis.JarToClasses;
 import com.validator.analysis.MapAnalyser;
 import com.validator.analysis.MapAnalyser.ComparisonStatus;
 
@@ -32,6 +34,7 @@ public class TestCheckIfJarIsCorrectlyOpened {
 	public void testJarHasClassesAccessed() {
 		
 		assertNotNull("Classes are contained", AnalysisStarter.classes);
+		assertNotNull("List is not empty", AnalysisStarter.classes.get(0));
 		assertNotNull("Classes are contained 2", AnalysisStarter.classes2);
 		
 	}
@@ -50,39 +53,97 @@ public class TestCheckIfJarIsCorrectlyOpened {
 		}
 		assertTrue("All classes have been found to be equal", true);
 	}
+	
 	@Test
-	public void testMethodsAreEqual(){
-		//Later change test to use Jar from JarToClasses
-		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis("/Users/Ben/Desktop/com.acme.prime.upper.api.jar" , "/Users/Ben/Desktop/com.acme.prime.upper.api.jar");
-		Collection<HashMap<Method, ComparisonStatus>> col = methodEqualityMap.values();
-		Iterator<HashMap<Method, ComparisonStatus>> colIter = col.iterator();
-		if(!colIter.hasNext()){
-			fail("Iterator does not have next");
+	public void testClassesArePutInMapCorrectly(){
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(AnalysisStarter.classes , AnalysisStarter.classes2);
+		Set<Class<?>> classSet = methodEqualityMap.keySet();
+		if(methodEqualityMap.size() == 0){
+			fail("dear god no");
 		}
-		while(colIter.hasNext()){
-			HashMap<Method, ComparisonStatus> map = colIter.next();
-			Collection<ComparisonStatus> comparisonCol = map.values();
-			Iterator<ComparisonStatus> iter = comparisonCol.iterator();
-			
-			for(ComparisonStatus c = iter.next(); iter.hasNext(); ){
-				if(c != ComparisonStatus.EQUAL){
-					fail("WASN'T EQUAL");
-				}
+		Iterator<Class<?>> classIter =  classSet.iterator();
+		ArrayList<String> classStrings = new ArrayList<String>();
+		
+		while(classIter.hasNext()){
+			Class<?> c = classIter.next();
+			classStrings.add(c.getName());
+		}
+		if(classStrings.size() == 0){
+			fail("WHY IS THERE NOTHING IN HERE");
+		}
+		ArrayList<String> notInMap = new ArrayList<String>();
+		ArrayList<String> inMap = new ArrayList<String>();
+		//if this doesn't work, convert al into strings
+		for(Class<?> c : AnalysisStarter.classes){
+			if(classStrings.contains(c.getName())){
+				inMap.add(c.getName());
+				continue;
+			} else {
+				//not contained, fail, should be in there
+				notInMap.add(c.getName());
 				
 			}
 			
 		}
-		assertTrue("All must be true", true);
+		
+		//find out if anything is in the ArrayList
+		if(notInMap.size() == AnalysisStarter.classes.size()){
+			fail("Everything went into the bloody notInMap");
+		}
+		assertFalse("Nothing was 'the same' ", inMap.isEmpty());
 	}
+	@Test
+	public void testMethodsAreEqual(){
+		//Later change test to use Jar from JarToClasses
+
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(AnalysisStarter.classes , AnalysisStarter.classes2);
+
+		Collection<HashMap<Method, ComparisonStatus>> col = methodEqualityMap.values();
+		HashMap[] colIter =  col.toArray(new HashMap[col.size()]);
+		Collection<ComparisonStatus> comparisonCol = null;
+		
+		int equalCount = 0;
+		for(HashMap<Method, ComparisonStatus> hash : colIter){
+			
+			if(hash == null){
+				fail("Entry was null");
+			}
+			comparisonCol = hash.values();
+			Iterator<ComparisonStatus> iter = comparisonCol.iterator();
+			
+			while(iter.hasNext()){
+				
+				ComparisonStatus c = iter.next();
+				if(c != ComparisonStatus.EQUAL){
+					fail("WASN'T EQUAL");
+				} else {
+					//is equal
+					equalCount++;
+				}
+
+			}
+		}
+		if(comparisonCol != null){
+		assertEquals("Equal count  to collection size, they are all equal", equalCount, comparisonCol.size());
+		}
+		else {
+			//comparisonCol == null, did not get through loop
+			fail("Did not get through loop at all");
+		}
+		//assertTrue("All must be true", true);
+	}
+
 	@Test
 	public void testMethodsAreNotEqual(){
 		//Testing that two different jars do not have the same methods (That my code is sort of correct)
-		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis("/Users/Ben/Desktop/com.acme.prime.upper.api.jar" , "/Users/Ben/Desktop/aether-api-1.0.2.v20150114.jar");
+		JarToClasses jar = new JarToClasses("/Users/Ben/Desktop/aether-api-1.0.2.v20150114.jar");
+		//These Jar's are completely different, therefore "methodEqualityMap" will not have methods that are the same.
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(AnalysisStarter.classes , jar.classes);
 		Collection<HashMap<Method, ComparisonStatus>> col = methodEqualityMap.values();
+		
+		Set<Class<?>> classSet =  methodEqualityMap.keySet();
 		Iterator<HashMap<Method, ComparisonStatus>> colIter = col.iterator();
-		if(!colIter.hasNext()){
-			fail("Iterator does not have next");
-		}
+		
 		while(colIter.hasNext()){
 			HashMap<Method, ComparisonStatus> map = colIter.next();
 			Collection<ComparisonStatus> comparisonCol = map.values();
@@ -105,9 +166,11 @@ public class TestCheckIfJarIsCorrectlyOpened {
 				}
 				//assertNotNull("Let's find out if this is ")
 			}
-			
+
 		}
-		fail("Reached the end without finding an inequality");
+				
+			assertTrue("Class set is not empty, but method map is", classSet.isEmpty());
+		
 	}
 
 }
