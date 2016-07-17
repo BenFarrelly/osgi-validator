@@ -1,6 +1,9 @@
 package com.validator.analysis;
 
 import java.io.IOException;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -44,13 +47,13 @@ public class JarToClasses {
 			
 			JarFile file = new JarFile(jar);
 			Enumeration<JarEntry> entries = file.entries();
-			
-			for(JarEntry entry = entries.nextElement(); entry != null && entries.hasMoreElements(); entry = entries.nextElement()){
+			while(entries.hasMoreElements()){
+				JarEntry entry = entries.nextElement();
 				if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
 					//-6 because of .class
 					className = entry.getName().substring(0, entry.getName().length()-6)
 							.replace('/', '.');
-					
+					//Class loadingAndAddingToMap = Class.forName(className);
 					Class<?> loadingAndAddingToMap = cl.loadClass(className);
 					//if interface checking only, confirm class is an interface. 
 					//If not using interface checking add regardless

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------------------
 Test set: com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.241 sec - in com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened
+Tests run: 8, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.294 sec <<< FAILURE! - in com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened
+testDifferentBundleAccess(com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened)  Time elapsed: 0.016 sec  <<< ERROR!
+java.lang.NoClassDefFoundError: BundleContext
+	at com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened.testDifferentBundleAccess(TestCheckIfJarIsCorrectlyOpened.java:235)
+Caused by: java.lang.ClassNotFoundException: BundleContext
+	at com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened.testDifferentBundleAccess(TestCheckIfJarIsCorrectlyOpened.java:235)
+

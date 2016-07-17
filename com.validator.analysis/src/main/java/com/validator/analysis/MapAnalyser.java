@@ -83,7 +83,10 @@ public class MapAnalyser {
 				//if(className1.equals(jarClasses2.classes.get(j).getName() )){
 				if(isClassEqual(class1, classes2.get(j))){	
 					//Class is equal!
-					intersectionOfClasses.add(class1);
+					//intersectionOfClasses.add(class1);
+					methodComparison = methodComparator(class1, class2);
+					methodEqualityMap.put(class1, methodComparison);
+					
 				} else if(class1.getName().equals(class2.getName()) ){ //Class not equal, but names are the same
 					//TODO implement subtyping, write method which checks what is not equal, if because not exists
 					//fail quickly, if type mismatch, then employ subtyping.

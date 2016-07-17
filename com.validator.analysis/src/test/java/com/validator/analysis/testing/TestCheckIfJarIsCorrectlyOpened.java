@@ -172,5 +172,109 @@ public class TestCheckIfJarIsCorrectlyOpened {
 			assertTrue("Class set is not empty, but method map is", classSet.isEmpty());
 		
 	}
+	@Test
+	public void testAccessToBundle(){
+		JarToClasses jar = new JarToClasses("/Users/Ben/Desktop/bundle.jar");
+		ArrayList<Class<?>> classes = jar.classes;
+		assertNotNull("classes retrieved", classes);
+		
+	}
+	@Test
+	public void testClassesAreAccessedCorrectlyFromBundle(){
+		//To check that these classes can be accessed down to the method type level.
+		//Checking the same bundle against itse'f, should be equal
+		JarToClasses jar = new JarToClasses("/Users/Ben/Desktop/bundle.jar");
+		ArrayList<Class<?>> classes = jar.classes;
+		if(classes.size() == 0){
+			fail("why is there nothing in here");
+		}
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>>  methodEqualityMap = MapAnalyser.updateJarAnalysis(jar.classes , jar.classes);
+		
+		Collection<HashMap<Method, ComparisonStatus>> col = methodEqualityMap.values();
+		HashMap[] colIter =  col.toArray(new HashMap[col.size()]);
+		Collection<ComparisonStatus> comparisonCol = null;
+		
+		int equalCount = 0;
+		for(HashMap<Method, ComparisonStatus> hash : colIter){
+			
+			if(hash == null){
+				fail("Entry was null");
+			}
+			comparisonCol = hash.values();
+			Iterator<ComparisonStatus> iter = comparisonCol.iterator();
+			
+			while(iter.hasNext()){
+				
+				ComparisonStatus c = iter.next();
+				if(c != ComparisonStatus.EQUAL){
+					fail("WASN'T EQUAL");
+				} else {
+					//is equal
+					equalCount++;
+				}
 
+			}
+		}
+		if(comparisonCol != null){
+		assertEquals("Equal count  to collection size, they are all equal", equalCount, comparisonCol.size());
+		}
+		else {
+			//comparisonCol == null, did not get through loop
+			fail("Did not get through loop at all");
+		}
+	
+	}
+	@Test
+	public void testDifferentBundleAccess(){
+		JarToClasses jar = new JarToClasses("/Users/Ben/Desktop/bundle.jar");
+		ArrayList<Class<?>> classes = jar.classes;
+		if(classes.size() == 0){
+			fail("why is there nothing in here");
+		}
+		try{
+		JarToClasses jar2 = new JarToClasses("/Users/Ben/Desktop/felixexample.jar");
+		} catch(Exception e){
+			
+			e.printStackTrace();
+			fail("Class not found");
+		}
+		ArrayList<Class<?>> classes2 = jar.classes;
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>>  methodEqualityMap = MapAnalyser.updateJarAnalysis(classes , classes2);
+		
+		Collection<HashMap<Method, ComparisonStatus>> col = methodEqualityMap.values();
+		HashMap[] colIter =  col.toArray(new HashMap[col.size()]);
+		Collection<ComparisonStatus> comparisonCol = null;
+		
+		int equalCount = 0;
+		int notEqualCount = 0;
+		for(HashMap<Method, ComparisonStatus> hash : colIter){
+			
+			if(hash == null){
+				fail("Entry was null");
+			}
+			comparisonCol = hash.values();
+			Iterator<ComparisonStatus> iter = comparisonCol.iterator();
+			
+			while(iter.hasNext()){
+				
+				ComparisonStatus c = iter.next();
+				if(c != ComparisonStatus.EQUAL){
+					notEqualCount++;
+				} else {
+					//is equal
+					equalCount++;
+				}
+
+			}
+		}
+		if(comparisonCol != null){
+			assertNotSame("There were inequal members", 0, notEqualCount);
+		}
+		else {
+			//comparisonCol == null, did not get through loop
+			fail("Did not get through loop at all");
+		}
+	
+	
+	}
 }
