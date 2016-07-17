@@ -3,8 +3,9 @@ package com.validator.analysis;
 import java.io.IOException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-
+import org.osgi.framework.*;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -80,7 +81,24 @@ public class JarToClasses {
 	}
 	
 	
-	
+	public static Class<?> getLoadedClass(String clazz){
+		Class<?> thisClass = null;
+		try {
+			URL[] urls={ new URL("file:" + clazz + "!/") };
+			URLClassLoader cl = URLClassLoader.newInstance(urls);
+			//clazz = clazz.substring(0, clazz.length()-6).replace('/', '.');
+			thisClass = cl.loadClass(clazz);
+			
+		
+		} catch (MalformedURLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return thisClass;
+		
+	}
 	
 	ArrayList<Class> getInterfaces(ArrayList<Class> classes){
 		ArrayList<Class> interfaces = new ArrayList<Class>();

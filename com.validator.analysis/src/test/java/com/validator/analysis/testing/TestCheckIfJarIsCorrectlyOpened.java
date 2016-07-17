@@ -2,7 +2,9 @@ package com.validator.analysis.testing;
 
 import static org.junit.Assert.*;
 
+
 import java.lang.reflect.Method;
+import java.lang.ClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import com.validator.analysis.AnalysisStarter;
 import com.validator.analysis.JarToClasses;
 import com.validator.analysis.MapAnalyser;
 import com.validator.analysis.MapAnalyser.ComparisonStatus;
-
+import org.osgi.framework.*;
 public class TestCheckIfJarIsCorrectlyOpened {
 
 	@BeforeClass
@@ -225,25 +227,26 @@ public class TestCheckIfJarIsCorrectlyOpened {
 	
 	}
 	@Test
-	public void testDifferentBundleAccess(){
-		JarToClasses jar = new JarToClasses("/Users/Ben/Desktop/bundle.jar");
-		ArrayList<Class<?>> classes = jar.classes;
-		if(classes.size() == 0){
+	public void testDifferentBundleAccess(){ // make dependency on importing activator?\
+		JarToClasses jar = new JarToClasses("/Users/Ben/Desktop/bundle.jar"); ///Users/Ben/Desktop/bundle.jar, Users/Ben/eclipse/felixtutorial/tutorial/bin/tutorial/example1/Activator
+		//Class<?> clazz = JarToClasses.getLoadedClass("/Users/Ben/Desktop/classes/tutorial/example1/Activator.class");
+		
+		if(jar.classes.isEmpty()){
 			fail("why is there nothing in here");
 		}
-		try{
-		JarToClasses jar2 = new JarToClasses("/Users/Ben/Desktop/felixexample.jar");
-		} catch(Exception e){
-			
-			e.printStackTrace();
-			fail("Class not found");
-		}
-		ArrayList<Class<?>> classes2 = jar.classes;
-		HashMap<Class<?>, HashMap<Method, ComparisonStatus>>  methodEqualityMap = MapAnalyser.updateJarAnalysis(classes , classes2);
+		ArrayList<Class<?>> classes = jar.classes;
+		JarToClasses jar2 = new JarToClasses("/Users/Ben/git/com.acme.prime/com.acme.eval.provider/generated/com.acme.eval.provider.jar");
 		
+		ArrayList<Class<?>> classes2 = jar2.classes;
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>>  methodEqualityMap = MapAnalyser.updateJarAnalysis(classes , classes2);
+		//Method equality map only returns methods where classes are the same or have the same name.
+		if(methodEqualityMap.keySet() == null){ assertTrue("No equal classes or methods", true); }
 		Collection<HashMap<Method, ComparisonStatus>> col = methodEqualityMap.values();
+		//This map shouldn't have anything in it as the classes are completely different.
+		
 		HashMap[] colIter =  col.toArray(new HashMap[col.size()]);
 		Collection<ComparisonStatus> comparisonCol = null;
+		if(colIter.length == 0){ assertTrue("no equal classes or methods", true);}
 		
 		int equalCount = 0;
 		int notEqualCount = 0;
@@ -272,7 +275,7 @@ public class TestCheckIfJarIsCorrectlyOpened {
 		}
 		else {
 			//comparisonCol == null, did not get through loop
-			fail("Did not get through loop at all");
+			assertTrue("Did not get through loop at all as there is no equal classes or methods", true);
 		}
 	
 	
