@@ -1,18 +1,32 @@
 package com.validator.analysis;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.osgi.framework.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 /*
  * This class exists to take a Jar file by with either a JarFile object or a path.
  * @author Benjamin Farrelly
@@ -27,6 +41,8 @@ public class JarToClasses {
 	public ArrayList<Class<?>> classes;
 	//This boolean is used if only interface checking is selected.
 	boolean wantsInterfaces = false;
+	
+	JarFile file;
 //	public JarToClasses(JarFile jar){
 //		classes = new ArrayList<Class>();
 //		Enumeration<JarEntry> entries = jar.entries();
@@ -39,17 +55,20 @@ public class JarToClasses {
 //	
 	
 	public JarToClasses(String jar){
-		classes = new ArrayList<Class<?>>();
 		String className;
+		classes = new ArrayList<Class<?>>();
+		Multimap manifest;
 		
 		try {
 			URL[] urls = { new URL("jar:file:" + jar + "!/") };
 			URLClassLoader cl = URLClassLoader.newInstance(urls);
 			
-			JarFile file = new JarFile(jar);
+			file = new JarFile(jar);
 			Enumeration<JarEntry> entries = file.entries();
 			while(entries.hasMoreElements()){
 				JarEntry entry = entries.nextElement();
+				if(entry.getName().contains("$1"))
+					continue;
 				if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
 					//-6 because of .class
 					className = entry.getName().substring(0, entry.getName().length()-6)
@@ -64,6 +83,13 @@ public class JarToClasses {
 					
 					
 					
+				} else if(!entry.isDirectory() && (entry.getName() =="manifest.mf") ) {
+						// ||entry.getName().endsWith(".MF"))){
+					manifest = getManifestMetadata(entry, file);
+					
+					
+				} else if(entry.isDirectory() && entry.getName().equals("META-INF")){
+					//entry = entry.
 				}
 			}
 		} catch (IOException e) {
@@ -79,7 +105,53 @@ public class JarToClasses {
 		
 		
 	}
-	
+	public static ArrayListMultimap<String, ArrayList<String>> getManifestMetadata(JarEntry entry, JarFile file){
+		//For getting manifest metadata by reading the contents of the manifest.mf file.
+		//TODO implement this method.
+		
+		//change implementation to use Manifest.getEntries map
+		try {
+			ArrayListMultimap<String, ArrayList<String>> manifestMap = ArrayListMultimap.create();
+			InputStream input = file.getInputStream(entry);
+			Manifest mf = new Manifest(input);
+			Map<String, Attributes> maniMap = mf.getEntries();
+			
+			//Headers
+			Set<String> headers = maniMap.keySet();
+			Iterator<String> it = headers.iterator();
+			ArrayList<String> manifestHeaders = new ArrayList<String>();
+			while(it.hasNext()){
+				String head = (String)it.next();
+				manifestHeaders.add(head);
+			}
+			
+			//Attributes -> strings
+			Collection<Attributes> attribs = maniMap.values();
+			Iterator<Attributes> iter = attribs.iterator();
+			ArrayList<String> attributeStrings = new ArrayList<String>();
+			while(iter.hasNext()){
+				Attributes att = iter.next();
+				Collection<Object>attValues = att.values();
+				Iterator<Object> attIter = attValues.iterator();
+				while(attIter.hasNext()){
+					String attStr = (String) attIter.next();
+					attributeStrings.add(attStr);
+				}
+			}
+			
+			//InputStreamReader isr = new InputStreamReader(input);
+			//BufferedReader reader = new BufferedReader(isr);
+			//Need to read manifest file which follows the format of
+			//header: value, value;
+			//while()
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 	
 	public static Class<?> getLoadedClass(String clazz){
 		Class<?> thisClass = null;

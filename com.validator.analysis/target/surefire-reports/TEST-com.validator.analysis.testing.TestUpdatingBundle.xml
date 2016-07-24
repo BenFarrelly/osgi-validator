@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0.288" tests="8" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.validator.analysis.testing.TestUpdatingBundle" time="0.036" tests="4" errors="0" skipped="0" failures="1">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_73.jdk/Contents/Home/jre/lib"/>
@@ -62,12 +62,12 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testMethodsAreEqual" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0.013"/>
-  <testcase name="testJarHasClassesAccessed" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0"/>
-  <testcase name="testMethodsAreNotEqual" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0.231"/>
-  <testcase name="testAccessToBundle" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0.004"/>
-  <testcase name="testClassesAreAccessedCorrectlyFromBundle" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0.001"/>
-  <testcase name="testDifferentBundleAccess" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0.006"/>
-  <testcase name="testClassesArePutInMapCorrectly" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0.001"/>
-  <testcase name="testClassesAreEqual" classname="com.validator.analysis.testing.TestCheckIfJarIsCorrectlyOpened" time="0"/>
+  <testcase name="testSubTypedMethodBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.003">
+    <failure message="Map does not contain anything other than EQUAL (TYPE MISMATCH)" type="java.lang.AssertionError">java.lang.AssertionError: Map does not contain anything other than EQUAL (TYPE MISMATCH)
+	at com.validator.analysis.testing.TestUpdatingBundle.testSubTypedMethodBundle(TestUpdatingBundle.java:139)
+</failure>
+  </testcase>
+  <testcase name="testForTypeMismatch" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.01"/>
+  <testcase name="testExactSameBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.005"/>
+  <testcase name="testMissingMethodBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.018"/>
 </testsuite>
