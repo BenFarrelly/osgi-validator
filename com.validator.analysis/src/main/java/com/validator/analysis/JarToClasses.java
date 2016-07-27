@@ -83,7 +83,8 @@ public class JarToClasses {
 					
 					
 					
-				} else if(!entry.isDirectory() && (entry.getName() =="manifest.mf") ) {
+				} else if(entry.getName().equals("META-INF/MANIFEST.MF") || entry.getName().equals("MANIFEST.MF")) {
+					
 						// ||entry.getName().endsWith(".MF"))){
 					manifest = getManifestMetadata(entry, file);
 					
@@ -117,27 +118,37 @@ public class JarToClasses {
 			Map<String, Attributes> maniMap = mf.getEntries();
 			
 			//Headers
-			Set<String> headers = maniMap.keySet();
-			Iterator<String> it = headers.iterator();
+		//	Set<String> headers = maniMap.keySet();
+			//Iterator<String> it = headers.iterator();
 			ArrayList<String> manifestHeaders = new ArrayList<String>();
-			while(it.hasNext()){
-				String head = (String)it.next();
+			ArrayList<String> manifestValues = new ArrayList<String>();
+			
+			Attributes attributes = mf.getMainAttributes();
+			Set<Object> attribNames = attributes.keySet();
+			Iterator<Object> attribIter = attribNames.iterator();
+			while(attribIter.hasNext()){
+				Attributes atts = (Attributes) attribIter.next();
+				String head = atts.toString(); 
 				manifestHeaders.add(head);
+				manifestValues.add(atts.getValue(head));
 			}
 			
-			//Attributes -> strings
-			Collection<Attributes> attribs = maniMap.values();
-			Iterator<Attributes> iter = attribs.iterator();
-			ArrayList<String> attributeStrings = new ArrayList<String>();
-			while(iter.hasNext()){
-				Attributes att = iter.next();
-				Collection<Object>attValues = att.values();
-				Iterator<Object> attIter = attValues.iterator();
-				while(attIter.hasNext()){
-					String attStr = (String) attIter.next();
-					attributeStrings.add(attStr);
-				}
-			}
+			//Attributes -> strings Probably not neeeeeeeeeeeeeeeeeeeded
+//			Collection<Attributes> attribs = maniMap.values();
+//			Iterator<Attributes> iter = attribs.iterator();
+//			ArrayList<String> attributeStrings = new ArrayList<String>();
+//			ArrayList<String> attributeValues = new ArrayList<String>();
+//			while(iter.hasNext()){
+//				Attributes att = iter.next();
+//				Collection<Object>attValues = att.values();
+//				Iterator<Object> attIter = attValues.iterator();
+//				while(attIter.hasNext()){
+//					
+//					String attStr = (String) attIter.next();
+//					attributeStrings.add(attStr);
+//			//		attributeValues.add()
+//				}
+//			}
 			
 			//InputStreamReader isr = new InputStreamReader(input);
 			//BufferedReader reader = new BufferedReader(isr);
