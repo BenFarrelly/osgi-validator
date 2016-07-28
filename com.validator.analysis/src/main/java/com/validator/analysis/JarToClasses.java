@@ -19,6 +19,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ import java.util.jar.Manifest;
  */
 public class JarToClasses {
 	public ArrayList<Class<?>> classes;
+	public Attributes attributes;
+	boolean interfaceChecking;
 	//This boolean is used if only interface checking is selected.
 	boolean wantsInterfaces = false;
 	
@@ -57,7 +60,7 @@ public class JarToClasses {
 	public JarToClasses(String jar){
 		String className;
 		classes = new ArrayList<Class<?>>();
-		Multimap manifest;
+		//HashMap<String,String> manifest;
 		
 		try {
 			URL[] urls = { new URL("jar:file:" + jar + "!/") };
@@ -86,7 +89,7 @@ public class JarToClasses {
 				} else if(entry.getName().equals("META-INF/MANIFEST.MF") || entry.getName().equals("MANIFEST.MF")) {
 					
 						// ||entry.getName().endsWith(".MF"))){
-					manifest = getManifestMetadata(entry, file);
+					attributes = getManifestMetadata(entry, file);
 					
 					
 				} else if(entry.isDirectory() && entry.getName().equals("META-INF")){
@@ -106,13 +109,16 @@ public class JarToClasses {
 		
 		
 	}
-	public static ArrayListMultimap<String, ArrayList<String>> getManifestMetadata(JarEntry entry, JarFile file){
+	public static Attributes getManifestMetadata(JarEntry entry, JarFile file){
 		//For getting manifest metadata by reading the contents of the manifest.mf file.
 		//TODO implement this method.
 		
-		//change implementation to use Manifest.getEntries map
-		try {
-			ArrayListMultimap<String, ArrayList<String>> manifestMap = ArrayListMultimap.create();
+		//Only need to check import header
+		
+			HashMap<String, String> manifestMap = new HashMap<String, String>();
+			String value;
+			Attributes attributes = null;
+			try {
 			InputStream input = file.getInputStream(entry);
 			Manifest mf = new Manifest(input);
 			Map<String, Attributes> maniMap = mf.getEntries();
@@ -123,16 +129,19 @@ public class JarToClasses {
 			ArrayList<String> manifestHeaders = new ArrayList<String>();
 			ArrayList<String> manifestValues = new ArrayList<String>();
 			
-			Attributes attributes = mf.getMainAttributes();
-			Set<Object> attribNames = attributes.keySet();
-			Iterator<Object> attribIter = attribNames.iterator();
-			while(attribIter.hasNext()){
-				Attributes atts = (Attributes) attribIter.next();
-				String head = atts.toString(); 
-				manifestHeaders.add(head);
-				manifestValues.add(atts.getValue(head));
-			}
+			attributes = mf.getMainAttributes();
+			value = attributes.getValue("Export-package");
 			
+//			Set<Object> attribNames = attributes.keySet();
+//			Iterator<Object> attribIter = attribNames.iterator();
+//			while(attribIter.hasNext()){
+//				Attributes atts = (Attributes) attribIter.next();
+//				String head = atts.toString(); 
+//				manifestHeaders.add(head);
+//				manifestValues.add(atts.getValue(head));
+//				manifestMap.put(head, atts.getValue(head));
+//			}
+//			
 			//Attributes -> strings Probably not neeeeeeeeeeeeeeeeeeeded
 //			Collection<Attributes> attribs = maniMap.values();
 //			Iterator<Attributes> iter = attribs.iterator();
@@ -160,7 +169,7 @@ public class JarToClasses {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return attributes;
 		
 	}
 	

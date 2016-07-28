@@ -41,6 +41,7 @@ public class MapAnalyser {
 		
 		JarToClasses jarClasses1 = new JarToClasses(jar1);
 		JarToClasses jarClasses2 = new JarToClasses(jar2);
+		
 	//	Comparing classes and taking intersection of classes in Jar file
 		ArrayList<Class<?>> intersectionOfClasses = new ArrayList<Class<?>>();
 		for(int i = 0; i < jarClasses1.classes.size()-1; i++){
