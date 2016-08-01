@@ -66,11 +66,81 @@ public class TestInterconnection {
 		assertTrue("Service did not show up as correct", serviceIsCorrect);
 	}
 	@Test
+	public void testIncorrectBundleNumber(){ //inverse of the above test
+		boolean serviceIsCorrect = false;
+		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
+		Class<?> service = null;
+		//find the interface which will have the implementing class checked
+		for(Class<?> clazz : jar.classes){
+			if(clazz.isInterface()){
+				service = clazz;
+				break;
+			}
+		}
+		if(service != null){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 15);
+		}
+		assertFalse("Somehow correct services were found", serviceIsCorrect);
+	}
+	@Test
+	public void testIndependentBundles(){
+		boolean serviceIsCorrect = false;
+		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
+		Class<?> service = null;
+		//find the interface which will have the implementing class checked
+		for(Class<?> clazz : jar.classes){
+			if(clazz.isInterface()){
+				service = clazz;
+				break;
+			}
+		}
+		if(service != null){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 2); //This bundle number will go check an independent bundle
+		}
+		assertFalse("Somehow there is an intersecting interface", serviceIsCorrect);
+	}
+	@Test
+	public void testIncorrectUsageOfInterface(){
+		//TODO implement a class which wrongly implements a class
+		//For this class the SpellChecker interface will have a different return type.
+		//Return type has been changed to int[] from String[]
+		boolean serviceIsCorrect = false;
+		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
+		Class<?> service = null;
+		//find the interface which will have the implementing class checked
+		for(Class<?> clazz : jar.classes){
+			if(clazz.isInterface()){
+				service = clazz;
+				break;
+			}
+		}
+		if(service != null){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 4); //This bundle number will go check an independent bundle
+		}
+		assertFalse("Somehow there is an intersecting interface", serviceIsCorrect);
+	}
+	
+	@Test
 	public void testInterconnectionAndVersionNumbers(){
 		//isServiceUsedCorrectly(); need to get the service class loaded, then check method.
-		
-	
+		//Test this with a whole lotta version numbers, this test comes down to the last number in the 3 number version number
+		boolean serviceIsCorrect = false;
+		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
+		Class<?> service = null;
+		//find the interface which will have the implementing class checked
+		for(Class<?> clazz : jar.classes){
+			if(clazz.isInterface()){
+				service = clazz;
+				break;
+			}
+		}
+		if(service != null){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 5); //This bundle number will go check an independent bundle
+		}
+		assertTrue("Maybe not reaching the correct bundle", serviceIsCorrect);
 	}
+	
+	
 	@Test
 	public void testWorksInOSGi(){
 		//in this test start up a framework programmatically and confirm that the bundle 

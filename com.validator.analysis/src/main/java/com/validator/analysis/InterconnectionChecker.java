@@ -1,6 +1,8 @@
 package com.validator.analysis;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,9 +32,14 @@ public class InterconnectionChecker {
 		//"felix-cache" is created in working directory by the framework, which contains a folder for the bundle based on its number
 		
 		//Automatically checks newest version , may have to check in "data" folder
-		File folder = new File("./felix-cache/bundle" + bundleNumber + "/data");
+	
+		File folder = new File("./felix-cache/bundle" + bundleNumber + "/data"); //will throw exception
+		
 		//File folder = new File(".");
 		File[] folderFiles = folder.listFiles();
+		if(folderFiles == null){
+			return false;
+		}
 		ArrayList<String> versionNumbers = new ArrayList<String>();
 		for(int i = 0; i < folderFiles.length; i++){ //TODO complete array implementation
 			String fileName = folderFiles[i].getName();

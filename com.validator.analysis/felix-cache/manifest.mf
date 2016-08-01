@@ -1,0 +1,7 @@
+Bundle-Name: Spell checker service
+Bundle-Description: A bundle that contains the spell checker interface
+Bundle-Vendor: Richard Hall/ Benjamin Farrelly
+Bundle-Version: 1.0.0
+Export-Package: tutorial.example6.service
+Import-Package: org.osgi.framework,
+ 
