@@ -15,7 +15,7 @@ public class InterconnectionChecker {
 		
 	}
 	
-	public boolean isServiceUsedCorrectly(Class<?> service, int bundleNumber){
+	public static boolean isServiceUsedCorrectly(Class<?> service, int bundleNumber){
 		//Minimum check according to Kramer and Magee.
 		//This class is used to check if the imported services are following correct usage,
 		//including the correct usage of data types.
@@ -23,42 +23,48 @@ public class InterconnectionChecker {
 		//COmparing the service interface to the implementing class
 		//Get service methods
 		Method[] serviceMethods = service.getDeclaredMethods();
-		
+		boolean isItCorrect = false;
 		//String servicesToBeChecked = manifest.get("Import-Package"); //Assuming this gives qualified class name
 		
 		//Now, bundle structure in the OSGI Framework
 		//"felix-cache" is created in working directory by the framework, which contains a folder for the bundle based on its number
 		
 		//Automatically checks newest version , may have to check in "data" folder
-		File folder = new File("felix-cache/bundle" + bundleNumber + "");
+		File folder = new File("./felix-cache/bundle" + bundleNumber + "/data");
+		//File folder = new File(".");
 		File[] folderFiles = folder.listFiles();
-		String[] versionNumbers = new String[folderFiles.length];
-		for(int i = 0; i < folderFiles.length-1; i++){ //TODO complete array implementation
+		ArrayList<String> versionNumbers = new ArrayList<String>();
+		for(int i = 0; i < folderFiles.length; i++){ //TODO complete array implementation
 			String fileName = folderFiles[i].getName();
-			String versionNumber = fileName.substring("version".length()-1); //Get the version string
-			versionNumbers[i] = versionNumber;
+			if(fileName.contains("version")){
+			String versionNumber = fileName.substring("version".length()); //Get the version string
+			versionNumbers.add(versionNumber);
+			}
 		}
-		String versionNumber = getLatestVersionNumber(versionNumbers);
-		JarToClasses bundle = new JarToClasses("felix-cache/bundle" + bundleNumber +"/data/version"+ versionNumber + "/bundle.jar");
+		String versionNumber = getLatestVersionNumber(versionNumbers); //DEBUGGING
+		if(versionNumber == "")
+			System.out.println("PLS NO");
+		JarToClasses bundle = new JarToClasses("./felix-cache/bundle" + bundleNumber +"/data/version"+ versionNumber + "/bundle.jar");
 		//Class which is being compared to the service class
 		//Need to compare these methods
 		Attributes attributes = bundle.attributes;
 		String exportPackage = attributes.getValue("Export-Package");
 		
-		if(exportPackage.contains(exportPackage))
-			return false;
+		//if(exportPackage.contains(exportPackage))
+			//return false;
 		
 		for(Class<?> clazz : bundle.classes){
-			if(clazz.getName().equals(exportPackage) || clazz.getName().equals(exportPackage+ "Impl") ){ 
+			if(clazz.getName().equals(service.getName()) || clazz.getName().equals(service.getName()+ "Impl") ){ 
 				//if the interface or the implementing class
-				checkServiceMethods(serviceMethods, clazz.getDeclaredMethods());
+				isItCorrect = checkServiceMethods(serviceMethods, clazz.getDeclaredMethods());
+				
 			}
 		}
 		
-		return false;
+		return isItCorrect;
 	}
 	
-	boolean checkServiceMethods(Method[] serviceMethods, Method[] usedMethods){ //Checking to see that the methods are the same
+	static boolean checkServiceMethods(Method[] serviceMethods, Method[] usedMethods){ //Checking to see that the methods are the same
 		if(serviceMethods.length > usedMethods.length){
 			//interface has to have at least all of it's methods implemented
 			return false;
@@ -102,10 +108,13 @@ public class InterconnectionChecker {
 		}
 	}
 	
-	String getLatestVersionNumber(String[] versionNumbers){
+	static String getLatestVersionNumber(ArrayList<String> versionNumbers){
 		//TODO Add in checks for less than 3 digits.
 		//versionNumbers contains a few version numbers, this will be accessed as String[]
 		ArrayList<String[]> splitVersionStrings = new ArrayList<String[]>();
+		if(versionNumbers.size() == 1){
+			return versionNumbers.get(0);
+		}
 		for(String str : versionNumbers){
 			splitVersionStrings.add(str.split("\\."));
 			
@@ -118,21 +127,31 @@ public class InterconnectionChecker {
 		 	if(Integer.parseInt(temp[0]) > Integer.parseInt(str[0])){
 		 		splitVersionStrings.remove(str);
 		 		continue;
-		 	} else if(Integer.parseInt(temp[0]) <= Integer.parseInt(str[0])){
-		 		if(Integer.parseInt(temp[1]) <= Integer.parseInt(str[1])){
+		 	} else if(Integer.parseInt(temp[0]) < Integer.parseInt(str[0])){
+		 		temp = str;
+		 		continue;
+		 		
+		 	} else {
+		 		if(Integer.parseInt(temp[1]) < Integer.parseInt(str[1])){
+		 			temp = str;
+		 			continue;
+		 			
+		 		}else if(Integer.parseInt(temp[1]) > Integer.parseInt(str[1])){
+		 			splitVersionStrings.remove(str);
+		 			
+		 		} else {
 		 			
 		 			if(Integer.parseInt(temp[2]) < Integer.parseInt(str[2])){
 		 				temp = str;
 		 			} else if(Integer.parseInt(temp[2]) > Integer.parseInt(str[2])){
 		 				splitVersionStrings.remove(str);
 		 			
+		 			} else {
+		 				
 		 			}
-		 			
-		 		} else {
-		 			splitVersionStrings.remove(str);
 		 		}
 		 	}
-		 	return temp[0] + "." + temp[1] + "." + temp[2];
+		 	
 		}
 		
 //		int[] firstVersionNumber = new int[versionNumbers.length];
@@ -155,7 +174,7 @@ public class InterconnectionChecker {
 //		
 //		//compare the first version number
 //		if()
-		return"";
+		return temp[0] + "." + temp[1] + "." + temp[2];
 	}
 
 }
