@@ -17,6 +17,31 @@ public class InterconnectionChecker {
 		
 	}
 	
+	public static String getBundlePathFromNumber(int bundleNumber){
+		//This method finds the bundle for checking by going through the felix-cache.
+		File folder = new File("./felix-cache/bundle" + bundleNumber + "/data");
+		File[] folderFiles = folder.listFiles();
+		if(folderFiles == null){
+			System.out.println("Bundle does not exist with that number");
+		}
+		ArrayList<String> versionNumbers = new ArrayList<String>();
+		for(int i = 0; i < folderFiles.length; i++){ //TODO complete array implementation
+			String fileName = folderFiles[i].getName();
+			if(fileName.contains("version")){
+			String versionNumber = fileName.substring("version".length()); //Get the version string
+			versionNumbers.add(versionNumber);
+			}
+		}
+		String versionNumber = getLatestVersionNumber(versionNumbers); //DEBUGGING
+		if(versionNumber == "")
+			System.out.println("Error in finding version number");
+		
+		return "./felix-cache/bundle" + bundleNumber +"/data/version"+ versionNumber + "/bundle.jar";
+		
+		
+		
+	}
+	
 	public static boolean isServiceUsedCorrectly(Class<?> service, int bundleNumber){
 		//Minimum check according to Kramer and Magee.
 		//This class is used to check if the imported services are following correct usage,
