@@ -21,7 +21,7 @@ public class ShellCommands {
 	private final BundleContext bundleContext;
 	private ConfigurationAdmin configAdmin;
 	
-	ShellCommands(BundleContext bundleContext){
+	public ShellCommands(BundleContext bundleContext){
 		
 		this.bundleContext = bundleContext;
 		
@@ -56,7 +56,7 @@ public class ShellCommands {
 			tempMap = methodEqualityMap.get(tempClass);
 				if(!tempMap.containsValue(ComparisonStatus.EQUAL)){
 					ComparisonStatus classStatus = tempMap.get(tempClass);
-					System.out.println(tempClass.getName() + " has a " + classStatus + " ");
+					System.out.println(tempClass.getName() + " has a " + classStatus + " solve this before updating bundle");
 				
 				} else if (tempMap.containsValue(ComparisonStatus.EQUAL)){
 						tempClassSize++;
@@ -66,6 +66,8 @@ public class ShellCommands {
 		}
 		if(tempClassSize == classSize){
 			System.out.println("The bundle has been validated and can be updated!");
+		} else {
+			System.out.println("Revise this bundle before updating");
 		}
 	}
 	public void update(
@@ -81,19 +83,46 @@ public class ShellCommands {
 		JarToClasses serviceBundle = new JarToClasses(path2);
 		ArrayList<Class<?>> serviceClasses = serviceBundle.classes;
 		Class<?> service = null;
+		for(Class<?> clazz: serviceClasses){//This only checks one bundle, TODO consider adding implementation for more than one service
+			if(clazz.isInterface()){
+				service = clazz;
+				break;
+			}
+		}
+		boolean serviceIsCorrect = false;
+		if(service!= null){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, path); // need to make new implementation that takes a path
+		}
+		if(serviceIsCorrect){
+			System.out.println("Passed validation against this service, feel free to update the bundle safely.");
+		} else {
+			System.out.print("Service was not correct in its usage, revise your usage of this service before updating");
+		}
+	}
+	
+	public void interconnection(
+			@Descriptor("Bundle number of the bundle that contains the service")int bundleNumber,
+			@Descriptor("Path to the bundle that is being checked for validation")String bundlePath){
+		String path = InterconnectionChecker.getBundlePathFromNumber(bundleNumber);
+		JarToClasses serviceBundle = new JarToClasses(path);
+		JarToClasses bundle = new JarToClasses(bundlePath);
+		ArrayList<Class<?>> serviceClasses = serviceBundle.classes;
+		Class<?> service = null;
 		for(Class<?> clazz: serviceClasses){
 			if(clazz.isInterface()){
 				service = clazz;
 				break;
 			}
 		}
-		boolean serviceIsCorrect;
+		boolean serviceIsCorrect = false;
 		if(service!= null){
-			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 0); // need to make new implementation that takes a path
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, path); // need to make new implementation that takes a path
 		}
-	}
-	public void interconnection(int bundeNumber, int bundleNumber){
-		
+		if(serviceIsCorrect){
+			System.out.println("Passed validation against this service, feel free to update the bundle safely");
+		} else {
+			System.out.println("Service was not correct in usage, revise your usage of this service before updating.");
+		}
 	}
 	
 }

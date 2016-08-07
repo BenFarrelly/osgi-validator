@@ -41,6 +41,28 @@ public class InterconnectionChecker {
 		
 		
 	}
+	public static boolean isServiceUsedCorrectly(Class<?> service, String path){
+		//Path is the path to a bundle.
+		boolean isItCorrect = false;
+		Method[] serviceMethods = service.getDeclaredMethods();
+		JarToClasses bundle = new JarToClasses(path);
+		Attributes attributes = bundle.attributes;
+		String exportPackage = attributes.getValue("Export-Package");
+		
+		//if(exportPackage.contains(exportPackage))
+			//return false;
+		
+		for(Class<?> clazz : bundle.classes){
+			if(clazz.getName().equals(service.getName()) || clazz.getName().equals(service.getName()+ "Impl") ){ 
+				//if the interface or the implementing class
+				isItCorrect = checkServiceMethods(serviceMethods, clazz.getDeclaredMethods());
+				
+			}
+		}
+		
+		return isItCorrect;
+		
+	}
 	
 	public static boolean isServiceUsedCorrectly(Class<?> service, int bundleNumber){
 		//Minimum check according to Kramer and Magee.
