@@ -19,13 +19,15 @@ public class InterconnectionChecker {
 	
 	public static String getBundlePathFromNumber(int bundleNumber){
 		//This method finds the bundle for checking by going through the felix-cache.
-		File folder = new File("./felix-cache/bundle" + bundleNumber + "/data");
+		File folder = new File("./felix-cache/bundle" + bundleNumber);
 		File[] folderFiles = folder.listFiles();
 		if(folderFiles == null){
 			System.out.println("Bundle does not exist with that number");
 		}
 		ArrayList<String> versionNumbers = new ArrayList<String>();
+		System.out.println("Making it to the start of the loop");
 		for(int i = 0; i < folderFiles.length; i++){ //TODO complete array implementation
+			System.out.println("Making it to this iteration --->" + i);
 			String fileName = folderFiles[i].getName();
 			if(fileName.contains("version")){
 			String versionNumber = fileName.substring("version".length()); //Get the version string

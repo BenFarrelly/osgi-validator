@@ -14,6 +14,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import com.validator.analysis.*;
+import com.validator.analysis.InterconnectionChecker;
 import com.validator.analysis.MapAnalyser.ComparisonStatus;
 
 public class ShellCommands {
@@ -37,7 +38,7 @@ public class ShellCommands {
 		//Firstly the classes are taken from the Bundle
 		JarToClasses jar = new JarToClasses(path);
 		ArrayList<Class<?>> classes = jar.classes;
-		String bundlePath = InterconnectionChecker.getBundlePathFromNumber(bundleNumber);
+		String bundlePath = InterconnectionChecker.getBundlePathFromNumber(bundleNumber); //TODO check if this is actually bening used
 		//TODO take the code from the tests
 		
 		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, classes);
