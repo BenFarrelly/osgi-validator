@@ -143,6 +143,8 @@ public class MapAnalyser {
 							if(returnType1.getName() == returnType2.getName()){ 
 								if(areParamsEqual(parameters, parameters2) == ComparisonStatus.EQUAL){
 									methodComparison.put(method, ComparisonStatus.EQUAL);
+								} else if(areParamsEqual(parameters, parameters2) == ComparisonStatus.SUB_TYPED){
+									methodComparison.put(method, ComparisonStatus.SUB_TYPED);
 								}
 							} else if((returnType1.getTypeName() == returnType2.getTypeName()) && 
 									areParamsEqual(parameters, parameters2) == ComparisonStatus.NOT_EQUAL){

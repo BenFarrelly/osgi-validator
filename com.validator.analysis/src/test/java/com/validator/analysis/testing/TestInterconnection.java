@@ -139,7 +139,25 @@ public class TestInterconnection {
 		}
 		assertTrue("Maybe not reaching the correct bundle", serviceIsCorrect);
 	}
-	
+	@Test
+	public void testTypeMismatch(){
+		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6_typemismatch/example6_typemismatch.jar");
+		//JarToClasses jar2 = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
+		Class<?> service = null;
+		boolean serviceIsCorrect = false;
+		//find the interface which will have the implementing class checked
+		for(Class<?> clazz : jar.classes){
+			if(clazz.isInterface()){
+				service = clazz;
+				break;
+			}
+		}
+		if(service != null){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, "/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar"); 
+		}
+		assertFalse("Somehow is correct", serviceIsCorrect);
+		
+	}
 	
 	@Test
 	public void testWorksInOSGi(){

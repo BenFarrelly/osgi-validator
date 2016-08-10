@@ -81,6 +81,8 @@ public class ShellCommands {
 				} else if (tempMap.containsValue(ComparisonStatus.EQUAL)){
 						tempClassSize++;
 						System.out.println("ComparisonStatus = EQUAL");
+				} else {
+					System.out.println("Did not have a comparison status for some reason");
 				}
 			
 			}
@@ -128,9 +130,9 @@ public class ShellCommands {
 			@Descriptor("Bundle number of the bundle that contains the service")int bundleNumber,
 			@Descriptor("Path to the bundle that is being checked for validation")String bundlePath){
 		String path = InterconnectionChecker.getBundlePathFromNumber(bundleNumber);
-		JarToClasses serviceBundle = new JarToClasses(path);
-		JarToClasses bundle = new JarToClasses(bundlePath);
-		ArrayList<Class<?>> serviceClasses = serviceBundle.classes;
+		//JarToClasses serviceBundle = new JarToClasses(path);
+		JarToClasses bundle = new JarToClasses(path);
+		ArrayList<Class<?>> serviceClasses = bundle.classes;
 		Class<?> service = null;
 		for(Class<?> clazz: serviceClasses){
 			if(clazz.isInterface()){
@@ -140,7 +142,7 @@ public class ShellCommands {
 		}
 		boolean serviceIsCorrect = false;
 		if(service!= null){
-			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, path); // need to make new implementation that takes a path
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, bundlePath); // need to make new implementation that takes a path
 		}
 		if(serviceIsCorrect){
 			System.out.println("Passed validation against this service, feel free to update the bundle safely");
