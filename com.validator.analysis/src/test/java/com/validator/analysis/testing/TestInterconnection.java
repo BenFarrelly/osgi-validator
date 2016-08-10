@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.validator.analysis.InterconnectionChecker;
 import com.validator.analysis.JarToClasses;
+import com.validator.analysis.MapAnalyser.ComparisonStatus;
 
 public class TestInterconnection {
 
@@ -19,7 +20,7 @@ public class TestInterconnection {
 	@Test
 	public void testIfBundleJarIsAccessible() {
 		
-		JarToClasses bundle = new JarToClasses("/Users/Ben/eclipse/validator/com.validator.analysis/felix-cache/bundle1/data/version1.1.0/bundle.jar");
+		JarToClasses bundle = new JarToClasses("/Users/Ben/eclipse/validator/com.validator.analysis/felix-cache/bundle1/version1.1.0/bundle.jar");
 		assertNotNull("No classes came through the bundle jar", bundle.classes);
 		Attributes atts = bundle.attributes;
 		assertNotNull("Attributes not coming through", atts);
@@ -28,7 +29,7 @@ public class TestInterconnection {
 	}
 	@Test
 	public void testSameInterfaceCanBeFound(){
-		JarToClasses bundle = new JarToClasses("/Users/Ben/eclipse/validator/com.validator.analysis/felix-cache/bundle1/data/version1.1.0/bundle.jar");
+		JarToClasses bundle = new JarToClasses("/Users/Ben/eclipse/validator/com.validator.analysis/felix-cache/bundle1/version1.1.0/bundle.jar");
 		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		//check the 
 		Attributes bundleAtts = bundle.attributes;
@@ -45,7 +46,7 @@ public class TestInterconnection {
 	@Test
 	public void testInterfaceCanBeFoundThroughInterconnection(){
 		//this time using the interconnection code to validate the connections
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		//JarToClasses bundle = new JarToClasses("/Users/Ben/eclipse/validator/felix-cache/bundle1/data/version1.1.0/bundle.jar");
 		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		//Attributes bundleAtts = bundle.attributes;
@@ -63,11 +64,11 @@ public class TestInterconnection {
 		if(service != null){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 3);
 		}
-		assertTrue("Service did not show up as correct", serviceIsCorrect);
+		assertTrue("Service did not show up as correct", serviceIsCorrect == ComparisonStatus.EQUAL);
 	}
 	@Test
 	public void testIncorrectBundleNumber(){ //inverse of the above test
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		Class<?> service = null;
 		//find the interface which will have the implementing class checked
@@ -78,13 +79,17 @@ public class TestInterconnection {
 			}
 		}
 		if(service != null){
+			try{
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 15);
+			}catch (NullPointerException e) {
+				assertTrue("Bundle was found", true);
+			}
 		}
-		assertFalse("Somehow correct services were found", serviceIsCorrect);
+		assertFalse("Somehow correct services were found", serviceIsCorrect == ComparisonStatus.EQUAL);
 	}
 	@Test
 	public void testIndependentBundles(){
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		Class<?> service = null;
 		//find the interface which will have the implementing class checked
@@ -97,14 +102,14 @@ public class TestInterconnection {
 		if(service != null){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 2); //This bundle number will go check an independent bundle
 		}
-		assertFalse("Somehow there is an intersecting interface", serviceIsCorrect);
+		assertFalse("Somehow there is an intersecting interface", serviceIsCorrect == ComparisonStatus.EQUAL);
 	}
 	@Test
 	public void testIncorrectUsageOfInterface(){
 		//TODO implement a class which wrongly implements a class
 		//For this class the SpellChecker interface will have a different return type.
 		//Return type has been changed to int[] from String[]
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		Class<?> service = null;
 		//find the interface which will have the implementing class checked
@@ -117,14 +122,14 @@ public class TestInterconnection {
 		if(service != null){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 4); //This bundle number will go check an independent bundle
 		}
-		assertFalse("Somehow there is an intersecting interface", serviceIsCorrect);
+		assertFalse("Somehow there is an intersecting interface", serviceIsCorrect ==  ComparisonStatus.EQUAL);
 	}
 	
 	@Test
 	public void testInterconnectionAndVersionNumbers(){
 		//isServiceUsedCorrectly(); need to get the service class loaded, then check method.
 		//Test this with a whole lotta version numbers, this test comes down to the last number in the 3 number version number
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		Class<?> service = null;
 		//find the interface which will have the implementing class checked
@@ -137,14 +142,14 @@ public class TestInterconnection {
 		if(service != null){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, 5); //This bundle number will go check an independent bundle
 		}
-		assertTrue("Maybe not reaching the correct bundle", serviceIsCorrect);
+		assertTrue("Maybe not reaching the correct bundle", serviceIsCorrect == ComparisonStatus.EQUAL);
 	}
 	@Test
 	public void testTypeMismatch(){
 		JarToClasses jar = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6_typemismatch/example6_typemismatch.jar");
 		//JarToClasses jar2 = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		Class<?> service = null;
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		//find the interface which will have the implementing class checked
 		for(Class<?> clazz : jar.classes){
 			if(clazz.isInterface()){
@@ -155,7 +160,7 @@ public class TestInterconnection {
 		if(service != null){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, "/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar"); 
 		}
-		assertFalse("Somehow is correct", serviceIsCorrect);
+		assertFalse("Somehow is correct", serviceIsCorrect == ComparisonStatus.EQUAL);
 		
 	}
 	

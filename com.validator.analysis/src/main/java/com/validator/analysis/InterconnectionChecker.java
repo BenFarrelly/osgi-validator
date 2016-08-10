@@ -43,9 +43,9 @@ public class InterconnectionChecker {
 		
 		
 	}
-	public static boolean isServiceUsedCorrectly(Class<?> service, String path){
+	public static ComparisonStatus isServiceUsedCorrectly(Class<?> service, String path){
 		//Path is the path to a bundle.
-		boolean isItCorrect = false;
+		ComparisonStatus isItCorrect = null;
 		Method[] serviceMethods = service.getDeclaredMethods();
 		JarToClasses bundle = new JarToClasses(path);
 		Attributes attributes = bundle.attributes;
@@ -66,7 +66,7 @@ public class InterconnectionChecker {
 		
 	}
 	
-	public static boolean isServiceUsedCorrectly(Class<?> service, int bundleNumber){
+	public static ComparisonStatus isServiceUsedCorrectly(Class<?> service, int bundleNumber){
 		//Minimum check according to Kramer and Magee.
 		//This class is used to check if the imported services are following correct usage,
 		//including the correct usage of data types.
@@ -74,7 +74,7 @@ public class InterconnectionChecker {
 		//COmparing the service interface to the implementing class
 		//Get service methods
 		Method[] serviceMethods = service.getDeclaredMethods();
-		boolean isItCorrect = false;
+		ComparisonStatus isItCorrect = null;
 		//String servicesToBeChecked = manifest.get("Import-Package"); //Assuming this gives qualified class name
 		
 		//Now, bundle structure in the OSGI Framework
@@ -82,12 +82,12 @@ public class InterconnectionChecker {
 		
 		//Automatically checks newest version , may have to check in "data" folder
 	
-		File folder = new File("./felix-cache/bundle" + bundleNumber + "/data"); //will throw exception
+		File folder = new File("./felix-cache/bundle" + bundleNumber); //will throw exception
 		
 		//File folder = new File(".");
 		File[] folderFiles = folder.listFiles();
 		if(folderFiles == null){
-			return false;
+			System.out.println("No bundle found in the felix-cache");
 		}
 		ArrayList<String> versionNumbers = new ArrayList<String>();
 		for(int i = 0; i < folderFiles.length; i++){ //TODO complete array implementation
@@ -100,7 +100,7 @@ public class InterconnectionChecker {
 		String versionNumber = getLatestVersionNumber(versionNumbers); //DEBUGGING
 		if(versionNumber == "")
 			System.out.println("PLS NO");
-		JarToClasses bundle = new JarToClasses("./felix-cache/bundle" + bundleNumber +"/data/version"+ versionNumber + "/bundle.jar");
+		JarToClasses bundle = new JarToClasses("./felix-cache/bundle" + bundleNumber +"/version"+ versionNumber + "/bundle.jar");
 		//Class which is being compared to the service class
 		//Need to compare these methods
 		Attributes attributes = bundle.attributes;
@@ -120,17 +120,19 @@ public class InterconnectionChecker {
 		return isItCorrect;
 	}
 	
-	static boolean checkServiceMethods(Method[] serviceMethods, Method[] usedMethods){ //Checking to see that the methods are the same
+	static ComparisonStatus checkServiceMethods(Method[] serviceMethods, Method[] usedMethods){ //Checking to see that the methods are the same
 		if(serviceMethods.length > usedMethods.length){
 			//interface has to have at least all of it's methods implemented
-			return false;
+			return ComparisonStatus.NOT_EQUAL;
 		}
-		ArrayList<Method> equalMethods = new ArrayList<Method>(); 
+		//ArrayList<Method> equalMethods = new ArrayList<Method>(); 
 		//arraylist for all the equal methods, should be same size as service methods
 		for(Method method : serviceMethods){
 			for(Method method2 : usedMethods){
 				if(method.equals(method2)){
-					equalMethods.add(method2);
+					return ComparisonStatus.EQUAL;
+					//equalMethods.add(method2);
+					
 				} else if(method.getName().equals(method2.getName())){
 					Class<?> returnType = method.getReturnType();
 					Class<?> returnType2 = method2.getReturnType();
@@ -141,14 +143,27 @@ public class InterconnectionChecker {
 						ComparisonStatus paramsStatus =	MapAnalyser.areParamsEqual(parameterTypes, parameterTypes2);
 						if(paramsStatus != ComparisonStatus.EQUAL){
 							//return false;
-							continue;
+							if(paramsStatus == ComparisonStatus.SUB_TYPED){
+								return ComparisonStatus.SUB_TYPED;
+							}
+							else if(paramsStatus == ComparisonStatus.TYPE_MISMATCH){
+								return ComparisonStatus.TYPE_MISMATCH;
+							}
+							
 						} else {
-							equalMethods.add(method2);
+							return ComparisonStatus.EQUAL;
+							//equalMethods.add(method2);
 						}
 
 					} else {
-						//return false;
-						continue;
+						//Return types were not the same.
+						if(returnType.isAssignableFrom(returnType2) || returnType2.isAssignableFrom(returnType)){
+							//Where the types are subtypes
+							return ComparisonStatus.SUB_TYPED;
+						}
+						//the return types have different names, because they are different
+						return ComparisonStatus.TYPE_MISMATCH;
+							
 					}
 				} else {
 					continue;
@@ -157,11 +172,10 @@ public class InterconnectionChecker {
 		}
 
 
-		if(equalMethods.size() >= serviceMethods.length){
-			return true;
-		} else {
-			return false;
-		}
+			//When the interface isn't used in this class
+			return ComparisonStatus.NO_METHOD;
+		
+		
 	}
 	
 	static String getLatestVersionNumber(ArrayList<String> versionNumbers){

@@ -115,11 +115,11 @@ public class ShellCommands {
 				break;
 			}
 		}
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		if(service!= null){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, path); // need to make new implementation that takes a path
 		}
-		if(serviceIsCorrect){
+		if(serviceIsCorrect == ComparisonStatus.EQUAL || serviceIsCorrect == ComparisonStatus.SUB_TYPED){
 			System.out.println("Passed validation against this service, feel free to update the bundle safely.");
 		} else {
 			System.out.print("Service was not correct in its usage, revise your usage of this service before updating");
@@ -140,12 +140,14 @@ public class ShellCommands {
 				break;
 			}
 		}
-		boolean serviceIsCorrect = false;
+		ComparisonStatus serviceIsCorrect = null;
 		if(service!= null){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, bundlePath); // need to make new implementation that takes a path
 		}
-		if(serviceIsCorrect){
+		if(serviceIsCorrect == ComparisonStatus.EQUAL){
 			System.out.println("Passed validation against this service, feel free to update the bundle safely");
+		}else if(serviceIsCorrect == ComparisonStatus.SUB_TYPED){
+			System.out.println("Passed validation, although the service is using a subtype.");
 		} else {
 			System.out.println("Service was not correct in usage, revise your usage of this service before updating.");
 		}
