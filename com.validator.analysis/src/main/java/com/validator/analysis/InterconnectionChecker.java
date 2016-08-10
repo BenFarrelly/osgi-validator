@@ -25,9 +25,9 @@ public class InterconnectionChecker {
 			System.out.println("Bundle does not exist with that number");
 		}
 		ArrayList<String> versionNumbers = new ArrayList<String>();
-		System.out.println("Making it to the start of the loop");
+		
 		for(int i = 0; i < folderFiles.length; i++){ //TODO complete array implementation
-			System.out.println("Making it to this iteration --->" + i);
+			
 			String fileName = folderFiles[i].getName();
 			if(fileName.contains("version")){
 			String versionNumber = fileName.substring("version".length()); //Get the version string
@@ -38,7 +38,7 @@ public class InterconnectionChecker {
 		if(versionNumber == "")
 			System.out.println("Error in finding version number");
 		
-		return "./felix-cache/bundle" + bundleNumber +"/data/version"+ versionNumber + "/bundle.jar";
+		return "./felix-cache/bundle" + bundleNumber +"/version"+ versionNumber + "/bundle.jar";
 		
 		
 		

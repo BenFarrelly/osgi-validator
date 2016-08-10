@@ -2,6 +2,7 @@ package com.validator.shell;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,12 +37,16 @@ public class ShellCommands {
 		//These are typically unchecked by osgi.
 		
 		//Firstly the classes are taken from the Bundle
+		try{
+			
 		JarToClasses jar = new JarToClasses(path);
+		
 		ArrayList<Class<?>> classes = jar.classes;
 		String bundlePath = InterconnectionChecker.getBundlePathFromNumber(bundleNumber); //TODO check if this is actually bening used
 		//TODO take the code from the tests
-		
-		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, classes);
+		JarToClasses jar2 = new JarToClasses(bundlePath);
+		ArrayList<Class<?>> classes2 = jar2.classes;
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, classes2);
 		//Now to give a response regarding the results
 		Set<Class<?>> classSet = methodEqualityMap.keySet();
 		Iterator<Class<?>> classIter = classSet.iterator();
@@ -49,18 +54,33 @@ public class ShellCommands {
 		HashMap<Method, ComparisonStatus> tempMap;
 		int classSize = classSet.size();
 		int tempClassSize = 0;
+		System.out.println("Making it to the start of the iterating loop, should make it through" + classSize + " times");
+		int i = 0;
 		while(classIter.hasNext()){
-			
+			i++;
 			tempClass = classIter.next();
+			System.out.println("Making it through this loop, iteration: " + i);
 			if(tempClass != null){
+				System.out.println("Getting into tempClass block for class: " + tempClass);
 			//assertNotNull("Class isn't null", tempClass);
 			tempMap = methodEqualityMap.get(tempClass);
-				if(!tempMap.containsValue(ComparisonStatus.EQUAL)){
-					ComparisonStatus classStatus = tempMap.get(tempClass);
-					System.out.println(tempClass.getName() + " has a " + classStatus + " solve this before updating bundle");
+			//This is going to get ugly
+			
+				if(tempMap.containsValue(ComparisonStatus.NO_METHOD)){
+					//ComparisonStatus classStatus = tempMap.get(tempClass);
+					System.out.println(tempClass.getName() + " has a missing method, solve this before updating bundle");
 				
+				}else if(tempMap.containsValue(ComparisonStatus.TYPE_MISMATCH)){
+					System.out.println(tempClass.getName() + " has a type mismatch solve this before updating bundle");
+				
+				}else if(tempMap.containsValue(ComparisonStatus.SUB_TYPED)){
+					tempClassSize++;
+					System.out.println(tempClass.getName() + " has a subtyped method, bundle is fine, just letting you know!");
+				}else if(tempMap.containsValue(ComparisonStatus.NOT_EQUAL)){
+					System.out.println(tempClass.getName() + " has a non-equal method solve this before updating bundle");
 				} else if (tempMap.containsValue(ComparisonStatus.EQUAL)){
 						tempClassSize++;
+						System.out.println("ComparisonStatus = EQUAL");
 				}
 			
 			}
@@ -69,6 +89,9 @@ public class ShellCommands {
 			System.out.println("The bundle has been validated and can be updated!");
 		} else {
 			System.out.println("Revise this bundle before updating");
+		}
+		}catch(Exception e){
+			System.out.println("That path returned a FileNotFoundException, please revise the path you provided");
 		}
 	}
 	public void update(
