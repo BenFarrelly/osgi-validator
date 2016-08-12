@@ -133,19 +133,21 @@ public class ShellCommands {
 		//JarToClasses serviceBundle = new JarToClasses(path);
 		JarToClasses bundle = new JarToClasses(path);
 		ArrayList<Class<?>> serviceClasses = bundle.classes;
-		Class<?> service = null;
+		ArrayList<Class<?>> services = new ArrayList<Class<?>>();
 		for(Class<?> clazz: serviceClasses){
 			if(clazz.isInterface()){
-				service = clazz;
-				break;
+				services.add(clazz);
+				
 			}
 		}
 		ComparisonStatus serviceIsCorrect = null;
-		if(service!= null){
-			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(service, bundlePath); // need to make new implementation that takes a path
+		if(services.size() != 0){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(services, bundlePath); // need to make new implementation that takes a path
 		}
+		System.out.println("ComparisonStatus of this interface is: " + serviceIsCorrect);
 		if(serviceIsCorrect == ComparisonStatus.EQUAL){
 			System.out.println("Passed validation against this service, feel free to update the bundle safely");
+			System.out.println("felix:update "+ 28);
 		}else if(serviceIsCorrect == ComparisonStatus.SUB_TYPED){
 			System.out.println("Passed validation, although the service is using a subtype.");
 		} else {

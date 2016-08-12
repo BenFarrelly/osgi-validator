@@ -43,13 +43,51 @@ public class InterconnectionChecker {
 		
 		
 	}
+	public static ComparisonStatus isServiceUsedCorrectly(ArrayList<Class<?>> services, String path){
+		ComparisonStatus isItCorrect = null;
+		ArrayList<ComparisonStatus> result = new ArrayList<ComparisonStatus>();
+		//ArrayList<Method[]> serviceMethods = new ArrayList<Method[]>();
+		//for(Class<?> clazz : services){
+		//	serviceMethods.add(clazz.getDeclaredMethods());
+		//}
+		JarToClasses bundle = new JarToClasses(path);
+		Attributes attributes = bundle.attributes;
+		//String exportPackage = attributes.getValue("Export-Package");
+
+		//if(exportPackage.contains(exportPackage))
+		//return false;
+		for(Class<?> service : services){
+			for(Class<?> clazz : bundle.classes){
+				if(clazz.getName().equals(service.getName()) || clazz.getName().equals(service.getName()+ "Impl") ){ 
+					//if the interface or the implementing class
+					result.add(checkServiceMethods(service.getDeclaredMethods(), clazz.getDeclaredMethods()));
+
+				} else if(clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))) 
+						|| clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))+ "Impl")){
+					result.add(checkServiceMethods(service.getDeclaredMethods(), clazz.getDeclaredMethods()));
+				}
+			}
+		}
+		if(result.contains(ComparisonStatus.NO_METHOD)){
+			return ComparisonStatus.NO_METHOD;
+		} else if(result.contains(ComparisonStatus.TYPE_MISMATCH)){
+			return ComparisonStatus.TYPE_MISMATCH;
+		} else if(result.contains(ComparisonStatus.SUB_TYPED)){
+			return ComparisonStatus.SUB_TYPED;
+		} else { //Only equals
+			return ComparisonStatus.EQUAL;
+		}
+
+
+
+	}
 	public static ComparisonStatus isServiceUsedCorrectly(Class<?> service, String path){
 		//Path is the path to a bundle.
 		ComparisonStatus isItCorrect = null;
 		Method[] serviceMethods = service.getDeclaredMethods();
 		JarToClasses bundle = new JarToClasses(path);
 		Attributes attributes = bundle.attributes;
-		String exportPackage = attributes.getValue("Export-Package");
+		//String exportPackage = attributes.getValue("Export-Package");
 		
 		//if(exportPackage.contains(exportPackage))
 			//return false;
@@ -59,7 +97,13 @@ public class InterconnectionChecker {
 				//if the interface or the implementing class
 				isItCorrect = checkServiceMethods(serviceMethods, clazz.getDeclaredMethods());
 				
+			} else if(clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))) 
+					|| clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))+ "Impl")){
+				isItCorrect = checkServiceMethods(serviceMethods, clazz.getDeclaredMethods());
 			}
+		}
+		if(isItCorrect == null){
+			System.out.println("isServiceCorrect() has returned null");
 		}
 		
 		return isItCorrect;
@@ -123,23 +167,32 @@ public class InterconnectionChecker {
 	static ComparisonStatus checkServiceMethods(Method[] serviceMethods, Method[] usedMethods){ //Checking to see that the methods are the same
 		if(serviceMethods.length > usedMethods.length){
 			//interface has to have at least all of it's methods implemented
+			System.out.println("Going into the first statement");
 			return ComparisonStatus.NOT_EQUAL;
 		}
+		System.out.println("making it past the first if statement");
 		//ArrayList<Method> equalMethods = new ArrayList<Method>(); 
 		//arraylist for all the equal methods, should be same size as service methods
+		int i = 0;
+		int j = 0;
 		for(Method method : serviceMethods){
+		//	System.out.println("Making it to i = " + i++);
 			for(Method method2 : usedMethods){
+			//	System.out.println("Making it to j = " + j++);
 				if(method.equals(method2)){
+				//	System.out.println("Method equals method2");
 					return ComparisonStatus.EQUAL;
 					//equalMethods.add(method2);
 					
 				} else if(method.getName().equals(method2.getName())){
+				//	System.out.println("Making it to the start of the methodname == methodname 2 block");
 					Class<?> returnType = method.getReturnType();
 					Class<?> returnType2 = method2.getReturnType();
 					Class<?>[] parameterTypes = method.getParameterTypes();
 					Class<?>[] parameterTypes2 = method2.getParameterTypes();
 
 					if(returnType.getName().equals(returnType2.getName())){	
+						//System.out.println("return type name equals return type 2");
 						ComparisonStatus paramsStatus =	MapAnalyser.areParamsEqual(parameterTypes, parameterTypes2);
 						if(paramsStatus != ComparisonStatus.EQUAL){
 							//return false;
@@ -156,9 +209,11 @@ public class InterconnectionChecker {
 						}
 
 					} else {
+				//		System.out.println("Making it to the start of the else block");
 						//Return types were not the same.
 						if(returnType.isAssignableFrom(returnType2) || returnType2.isAssignableFrom(returnType)){
 							//Where the types are subtypes
+							System.out.println("Making it to return 'sub_typed' ");
 							return ComparisonStatus.SUB_TYPED;
 						}
 						//the return types have different names, because they are different
