@@ -9,8 +9,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.felix.gogo.runtime.CommandProcessorImpl;
+import org.apache.felix.gogo.runtime.threadio.ThreadIOImpl;
+import org.apache.felix.service.command.CommandProcessor;
+import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Descriptor;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -23,6 +29,7 @@ public class ShellCommands {
 	private final BundleContext bundleContext;
 	private ConfigurationAdmin configAdmin;
 	
+	CommandProcessorImpl cp;
 	public ShellCommands(BundleContext bundleContext){
 		
 		this.bundleContext = bundleContext;
@@ -128,7 +135,9 @@ public class ShellCommands {
 	
 	public void interconnection(
 			@Descriptor("Bundle number of the bundle that contains the service")int bundleNumber,
-			@Descriptor("Path to the bundle that is being checked for validation")String bundlePath){
+			@Descriptor("Path to the bundle that is being checked for validation")String bundlePath) throws BundleException{
+		
+		
 		String path = InterconnectionChecker.getBundlePathFromNumber(bundleNumber);
 		//JarToClasses serviceBundle = new JarToClasses(path);
 		JarToClasses bundle = new JarToClasses(path);
@@ -147,7 +156,30 @@ public class ShellCommands {
 		System.out.println("ComparisonStatus of this interface is: " + serviceIsCorrect);
 		if(serviceIsCorrect == ComparisonStatus.EQUAL){
 			System.out.println("Passed validation against this service, feel free to update the bundle safely");
-			System.out.println("felix:update "+ 28);
+			Bundle[] bundles = bundleContext.getBundles();
+			Bundle updatingBundle = null;
+				for(Bundle b : bundles){
+					if(b.getBundleId() == bundleNumber){
+						updatingBundle = b;
+						break;
+					}
+				}
+			if(updatingBundle != null){
+				updatingBundle.update();
+				System.out.println("Bundle" + bundleNumber + "updated");
+			}
+			
+//			try {
+//				//commandProcessor = getOsgiService(CommandProcessor.class);
+//				ThreadIOImpl t = new ThreadIOImpl();
+//				t.start();
+//				cp = new CommandProcessorImpl(t);
+//				CommandSession csesh = cp.createSession(System.in, System.out, System.err);
+//				csesh.execute("felix:update "+ bundleNumber);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}else if(serviceIsCorrect == ComparisonStatus.SUB_TYPED){
 			System.out.println("Passed validation, although the service is using a subtype.");
 		} else {
