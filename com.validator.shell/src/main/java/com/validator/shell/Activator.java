@@ -22,7 +22,7 @@ public class Activator implements BundleActivator {
 		Hashtable properties = new Hashtable();
 		properties.put("osgi.command.scope", "validate");
 		properties.put("osgi.command.function", 
-				new String[] { "update", "interconnection" });
+				new String[] { "update", "interconnection", "totalinterconnection" });
 	shellRegistration =	bundleContext.registerService(
 			ShellCommands.class.getName(), 
 			new ShellCommands(bundleContext), properties);

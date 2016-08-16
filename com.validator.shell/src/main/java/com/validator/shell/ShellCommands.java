@@ -1,24 +1,19 @@
 package com.validator.shell;
 
-import static org.junit.Assert.assertNotNull;
 
-import java.io.FileNotFoundException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.felix.gogo.runtime.CommandProcessorImpl;
-import org.apache.felix.gogo.runtime.threadio.ThreadIOImpl;
-import org.apache.felix.service.command.CommandProcessor;
-import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Descriptor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import com.validator.analysis.*;
 import com.validator.analysis.InterconnectionChecker;
@@ -36,7 +31,7 @@ public class ShellCommands {
 
 		//getConfigAdmin();
 	}
-	//TODO bring in update code
+	//
 	@Descriptor("Validate a bundle for updating.")
 	public void update(
 			@Descriptor("The bundle number that is the 'old' bundle")int bundleNumber, 
@@ -62,16 +57,16 @@ public class ShellCommands {
 			HashMap<Method, ComparisonStatus> tempMap;
 			int classSize = classSet.size();
 			int tempClassSize = 0;
-			System.out.println("Making it to the start of the iterating loop, should make it through" + classSize + " times");
-			int i = 0;
+			//System.out.println("Making it to the start of the iterating loop, should make it through" + classSize + " times");
+			//int i = 0;
 			Bundle updatingBundle = bundleContext.getBundle("file:" + path);
 
 			while(classIter.hasNext()){
-				i++;
+				//i++;
 				tempClass = classIter.next();
-				System.out.println("Making it through this loop, iteration: " + i);
+				//System.out.println("Making it through this loop, iteration: " + i);
 				if(tempClass != null){
-					System.out.println("Getting into tempClass block for class: " + tempClass);
+				//	System.out.println("Getting into tempClass block for class: " + tempClass);
 					//assertNotNull("Class isn't null", tempClass);
 					tempMap = methodEqualityMap.get(tempClass);
 					//This is going to get ugly
@@ -121,12 +116,12 @@ public class ShellCommands {
 			e.printStackTrace();
 		}
 	}
-	public void update(
+	/*public void update(
 			@Descriptor("The number of the bundle which you wish to validate")int bundleNumber){//Maybe not relevant...
 
 
-	}
-	//TODO bring in update code
+	}*/
+	//
 	@Descriptor("Used for checking that a bundle implements a service correctly, give either paths or bundle numbers for the validating bundle and the bundle that contains the service.")
 	public void interconnection(
 			@Descriptor("The path to the bundle being updated")String path, 
@@ -136,7 +131,7 @@ public class ShellCommands {
 		ArrayList<Class<?>> serviceClasses = serviceBundle.classes;
 		Class<?> service = null;
 		Bundle updatingBundle = bundleContext.getBundle("file:"+ path);
-		for(Class<?> clazz: serviceClasses){//This only checks one bundle, TODO consider adding implementation for more than one service
+		for(Class<?> clazz: serviceClasses){//This only checks one bundle, 
 			if(clazz.isInterface()){
 				service = clazz;
 				break;
@@ -233,7 +228,7 @@ public class ShellCommands {
 			//				CommandSession csesh = cp.createSession(System.in, System.out, System.err);
 			//				csesh.execute("felix:update "+ bundleNumber);
 			//			} catch (Exception e) {
-			//				// TODO Auto-generated catch block
+			//				// 
 			//				e.printStackTrace();
 			//			}
 		}else if(serviceIsCorrect == ComparisonStatus.SUB_TYPED){
@@ -257,5 +252,45 @@ public class ShellCommands {
 			System.out.println("Service was not correct in usage, revise your usage of this service before updating.");
 		}
 	}
-
+	@Descriptor("This method checks the interface implementations in this bundle against all the bundle in the framework which export the interface through the export-package header")
+	public void totalinterconnection(
+			@Descriptor("Path to the bundle in which you wish to check against all other bundles")String path){
+		Bundle checkingBundle = bundleContext.getBundle("file:" + path);
+		Dictionary<String, String> headers = checkingBundle.getHeaders();
+		String importHeader = headers.get("Import-Package");
+		System.out.println("The result of import header is: " + importHeader);
+		String[] allImports = importHeader.split("\\.");
+		ArrayList<String> packagesToCheck = new ArrayList<String>();
+		for(String i : allImports){
+			if(i.contains("service")){
+				//The OSGi naming conventions mean that all service packages finish with the '.service' as part of it's name
+				packagesToCheck.add(i);
+			}
+		}
+		Bundle[] allBundles = bundleContext.getBundles();
+		ArrayList<Bundle> bundlesToCheck = new ArrayList<Bundle>();
+		for(Bundle bund : allBundles){
+			String temp = bund.getHeaders().get("Export-Package");
+			String[] tempSplit = temp.split("\\.");
+			for(String x : tempSplit){
+				if(packagesToCheck.contains(x)){
+					bundlesToCheck.add(bund);
+				}
+			}
+		}
+		//Now have the bundles we need to check by comparing the Import and Export package headers.
+		//Then search through service package for interfaces - then compare these interfaces to classes checking if they implement them
+		//then checking that they are being implemented correctly.
+		//TODO
+		JarToClasses jar = new JarToClasses(path);
+		ArrayList<Class<?>> classesToCheck = new ArrayList<Class<?>>();
+		ArrayList<Class<?>[]> interfaces = new ArrayList<Class<?>[]>();
+		for(Class<?> clazz : jar.classes){
+			if(clazz.getName().contains("Impl")){ //By the naming convention of implementing a service in OSGi
+				classesToCheck.add(clazz);
+				interfaces.add(clazz.getInterfaces()); //gets all interfaces implemented by this class.
+			}
+		}
+	
+	}
 }
