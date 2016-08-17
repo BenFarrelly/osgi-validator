@@ -290,7 +290,7 @@ public class MapAnalyser {
 		return ComparisonStatus.TYPE_MISMATCH;
 	}
 	
-	static boolean isClassEqual(Class<?> class1, Class<?> class2){
+	public static boolean isClassEqual(Class<?> class1, Class<?> class2){
 		//This method will compare an older version of a bundle class against a newer version.
 		//This method will employ Method.equals() for first level comparison 
 		//TODO Create a list to hold onto the methods which are not in either class?

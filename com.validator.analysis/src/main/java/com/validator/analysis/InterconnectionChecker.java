@@ -164,7 +164,7 @@ public class InterconnectionChecker {
 		return isItCorrect;
 	}
 	
-	static ComparisonStatus checkServiceMethods(Method[] serviceMethods, Method[] usedMethods){ //Checking to see that the methods are the same
+	public static ComparisonStatus checkServiceMethods(Method[] serviceMethods, Method[] usedMethods){ //Checking to see that the methods are the same
 		if(serviceMethods.length > usedMethods.length){
 			//interface has to have at least all of it's methods implemented
 			System.out.println("Going into the first statement");
