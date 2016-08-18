@@ -4,9 +4,11 @@ package com.validator.shell;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.felix.gogo.runtime.CommandProcessorImpl;
@@ -187,7 +189,9 @@ public class ShellCommands {
 		if(services.size() != 0){
 			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(services, bundlePath); // need to make new implementation that takes a path
 		}
+
 		System.out.println("ComparisonStatus of this interface is: " + serviceIsCorrect);
+
 		if(serviceIsCorrect == ComparisonStatus.EQUAL){
 			System.out.println("Passed validation against this service, feel free to update the bundle safely");
 			//Bundle[] bundles = bundleContext.getBundles();
@@ -268,36 +272,90 @@ public class ShellCommands {
 			}
 		}
 		System.out.println("We have " + classesToCheck.size() + " classes to look for which is: " + classesToCheck.get(0));
-		Class<?>[] interfacesToFind = classesToCheck.get(0).getInterfaces();//TODO change this to use a list
+		Class<?>[] interfacesToFind = classesToCheck.get(0).getInterfaces();
 		System.out.println("Now we are looking for this interface: " + interfacesToFind[0].getName()); //NEED TO FIND THIS INTERFACE
-
+		List<Class<?>> interfacesList = Arrays.asList(interfacesToFind);
+		ArrayList<Class<?>> interfaces = new ArrayList<Class<?>>(interfacesList);
 		//Now to decide if in bundle.
 		if(isInBundle(interfacesToFind, checkingJar)){
 			System.out.println("The only interfaces to find are in this class already");
-		
-		} else {
-			//Need to find the results of finding the interfaces in external bundles
+			System.out.println("");
+
+			ComparisonStatus serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(interfaces, path);
+			if(serviceIsCorrect == ComparisonStatus.EQUAL || serviceIsCorrect == ComparisonStatus.SUB_TYPED){
+				if(serviceIsCorrect == ComparisonStatus.EQUAL){
+					System.out.println("Passed validation against this service, feel free to update the bundle safely");
+					if(checkingBundle != null){
+						try {
+							checkingBundle.update();
+
+							System.out.println("Bundle " + path +  " updated");
+							checkingBundle.start();
+							System.out.println("Bundle " + checkingBundle.getBundleId() + " has started successfully!");
+						} catch (BundleException e) {
+							if(e.getType() == BundleException.RESOLVE_ERROR){
+								System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
+								System.out.println("Bundle is installed, solve resolver issue before starting");
+							} else {
+								System.out.println("A Bundle exception because : " + e.getType());
+								e.printStackTrace();
+							}
+						}
 
 
+					}
+				} else if(serviceIsCorrect == ComparisonStatus.SUB_TYPED){
+					System.out.println("Passed validation, although the service is using a subtype.");
 
-
-			Dictionary<String, String> headers = checkingBundle.getHeaders();
-			String importHeader = headers.get("Import-Package");
-			System.out.println("The result of import header is: " + importHeader);
-			String[] allImports = importHeader.split(",");
-			ArrayList<String> packagesToCheck = new ArrayList<String>();
-			for(String i : allImports){
-				if(i.contains("service")){
-					//The OSGi naming conventions mean that all service packages finish with the '.service' as part of it's name
-					packagesToCheck.add(i);
+					if(checkingBundle != null){
+						try {
+							checkingBundle.update();
+							System.out.println("Bundle " + path +  " updated");
+							checkingBundle.start();
+						} catch (BundleException e) {
+							if(e.getType() == BundleException.RESOLVE_ERROR){
+								System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
+								System.out.println("Bundle is installed, solve resolver issue before starting");
+							} else {
+								System.out.println("A Bundle exception because : " + e.getType());
+								e.printStackTrace();
+							}
+						}
+						System.out.println("Bundle " + path +  " updated");
+					}
 				}
+			} else {
+				System.out.println("Service was not correct in usage, revise your usage of this service before updating.");
 			}
+		} else {//When the interface isn't internal
+			//Need to find the results of finding the interfaces in external bundles
+			//TODO External checking
+			try {
+				checkingBundle.update();
+			} catch (BundleException e) {
+				if(e.getType() == BundleException.RESOLVE_ERROR){ 
+					//by doing this we can use the framework to find out if the package exists in the framework
+					System.out.println("There is an issue resolving, ensure that the packages under "
+							+ "your bundles Import-Package header are in the OSGi framework");
+				} else {
+					System.out.println("There is a different resolver error");
+					e.printStackTrace();
+				}
+				return; //Just to end this method from running
+			}
+			ArrayList<String> packageNames = new ArrayList<String>();
+			for(Class<?> inter : interfaces){
+				packageNames.add(inter.getPackage().getName());
+			}
+
 			Bundle[] allBundles = bundleContext.getBundles();
-			for(Bundle bun : allBundles){
+			for(Bundle bun : allBundles){ //Only used for debugging TODO remove for production code
 				System.out.println("Bundle: "+bun.getBundleId());
 			}
-			if(allBundles == null){ System.out.println("WHY ARE YOU NULL");}
-			ArrayList<Bundle> bundlesToCheck = new ArrayList<Bundle>();
+			//Looking now for the packages that are being exported to see if we can find this package.
+			//This list contains bundles that contain the packages we are looking for in their Export-Package header
+			//meaning that these packages are inside the bundle, meaning we will find the interfaces we are looking for.
+			ArrayList<Bundle> bundlesToCheck = new ArrayList<Bundle>(); 
 			for(Bundle bund : allBundles){
 				String temp = bund.getHeaders().get("Export-Package");
 				String[] tempSplit;
@@ -309,20 +367,20 @@ public class ShellCommands {
 				}
 				for(String x : tempSplit){
 					//System.out.println(x + " is being checked");
-					if(packagesToCheck.contains(x)){
-						System.out.println("MADE IT PAST THE PACKAGESTOCHECK COMPARISON");
+					if(packageNames.contains(x)){
+						System.out.println("Made it through the packages comparison");
 						bundlesToCheck.add(bund);
 					}
 				}
 			}
-			System.out.println("Finished getting packages to check, we have " + packagesToCheck.size() + " packages to check, which is "+ packagesToCheck.get(0));
+			System.out.println("Finished getting packages to check, we have " + packageNames.size() + " packages to check, which is "+ packageNames.get(0));
 			System.out.println("Finished getting bundles to check, we have " + bundlesToCheck.size() + " bundles to check, which is: " + bundlesToCheck.get(0));
 			//Now have the bundles we need to check by comparing the Import and Export package headers.
 			//Then search through service package for interfaces - then compare these interfaces to classes checking if they implement them
 			//then checking that they are being implemented correctly.
-			//TODO
-
-			ArrayList<Class<?>> checkingClasses = new ArrayList<Class<?>>();
+			//TODO -- revise the checking -- write some tests -- ~~ weeeee
+			//check that we are finding the interface in these classes
+			/*ArrayList<Class<?>> checkingClasses = new ArrayList<Class<?>>();
 			ArrayList<Class<?>[]> interfaces = new ArrayList<Class<?>[]>();
 			for(Bundle b : bundlesToCheck){
 				JarToClasses jar = new JarToClasses(b.getLocation().substring(5));
@@ -332,14 +390,83 @@ public class ShellCommands {
 						interfaces.add(clazz.getInterfaces()); //gets all interfaces implemented by this class.
 					}
 				}
+			}*/
+			//Looking for items from interfaces list, and using classesToCheck with this
+			ArrayList<ComparisonStatus> results = new ArrayList<ComparisonStatus>();
+			int interfacesLength = interfaces.size();
+			for(Bundle bund : bundlesToCheck){//TODO MAKE THIS MEET SPEC IN NOTEBOOK
+				JarToClasses jar = new JarToClasses(bund.getLocation().substring(5));
+				for(Class<?> clazz : jar.classes){
+					if(interfaces.contains(clazz)){
+						//find if this interface is being implemented correctly.
+						Class<?> interf = interfaces.get(interfaces.indexOf(clazz));
+						//Now compare clazz against interf
+						ComparisonStatus result = InterconnectionChecker.checkServiceMethods(interf.getDeclaredMethods(), clazz.getDeclaredMethods());
+						if(result == ComparisonStatus.EQUAL){
+							interfacesLength--; //Decrement once found, once all are found we won't need to look any more
+							System.out.println(clazz.getName()+" and "+ interf.getName() + " were equal");
+							results.add(result);
+						} else if(result == ComparisonStatus.SUB_TYPED){
+							interfacesLength--;
+							System.out.println(clazz.getName()+" and "+ interf.getName() + " were sub typed");
+							results.add(result);
+						} else {
+							//FAILED
+							System.out.println(interf.getName() + " failed with a " + result + " sort this out before updating and starting.");
+							results.add(result);
+						}
+
+						/*						for(Class<?> implClazz :classesToCheck){
+							Class<?>[] classesInterfaces = implClazz.getInterfaces();
+							for(int i = 0; i < classesInterfaces.length; i++){
+								if(interfaces.contains(classesInterfaces[i])){
+								//ComparisonStatus result =	InterconnectionChecker.checkServiceMethods()
+							}
+
+						}*/
+					}
+				}
 			}
-			System.out.println("Finished getting interfaces to check, we have " + interfaces.size() 
+			for(ComparisonStatus c : results){
+				if(c == ComparisonStatus.EQUAL || c == ComparisonStatus.SUB_TYPED){
+					continue;
+
+				} else {
+					System.out.println("Interconnection failed");
+					return;
+				}
+			}
+
+			if(checkingBundle != null){
+				try {
+					checkingBundle.update();
+					System.out.println("Bundle " + path +  " updated");
+					checkingBundle.start();
+				} catch (BundleException e) {
+					if(e.getType() == BundleException.RESOLVE_ERROR){
+						System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
+						System.out.println("Bundle is installed, solve resolver issue before starting");
+					} else {
+						System.out.println("A Bundle exception because : " + e.getType());
+						e.printStackTrace();
+					}
+				}
+				System.out.println("Bundle " + path +  " updated");
+				if(results.contains(ComparisonStatus.SUB_TYPED)){
+					System.out.println("Updated and started, however with a subtyped interface");
+				} else {
+					System.out.println("Updated and started with no issues");
+				}
+
+			}
+		}
+		/*	System.out.println("Finished getting interfaces to check, we have " + interfaces.size() 
 			+ "interfaces to check, which is: "+ interfaces.get(0)[0].getName());
 			System.out.println("Finished getting classes to check, we have " + classesToCheck.size()
-			+ " classes to check, which is: "+ checkingClasses.get(checkingClasses.size()-1));
+			+ " classes to check, which is: "+ checkingClasses.get(checkingClasses.size()-1));*/
 
-			//Then compare the interfaces that have be obtained, or do that in loop?
-			ArrayList<ComparisonStatus> results = new ArrayList<ComparisonStatus>();
+		//Then compare the interfaces that have be obtained, or do that in loop?
+		/*ArrayList<ComparisonStatus> results = new ArrayList<ComparisonStatus>();
 			HashMap<String, ComparisonStatus> resultMap = new HashMap<String, ComparisonStatus>();
 			for(Class<?>[] interf : interfaces){//uses checkServiceMethods
 				for(Class<?> singleInterface : interf){
@@ -353,8 +480,8 @@ public class ShellCommands {
 					}
 				}
 			}
-
-			System.out.println("Finished comparisons");
+		 */
+		/*	System.out.println("Finished comparisons");
 			if(resultMap.keySet().size() == 0){
 				System.out.println("Result map is zero");
 
@@ -364,9 +491,9 @@ public class ShellCommands {
 			}
 			for(String key :resultMap.keySet()){
 				System.out.print(key + " has the comparison status of " + resultMap.get(key));
-			}
-		}
+			}*/
 	}
+
 	boolean isInBundle(Class<?>[] checkingInterfaces, JarToClasses jar){
 
 		for(Class<?> clazz : jar.classes){
