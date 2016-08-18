@@ -16,6 +16,8 @@ import org.apache.felix.service.command.Descriptor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 import com.validator.analysis.*;
 import com.validator.analysis.MapAnalyser.ComparisonStatus;
@@ -263,12 +265,15 @@ public class ShellCommands {
 			@Descriptor("Path to the bundle in which you wish to check against all other bundles")String path){
 		//Need to find the service implementation from the bundle we are checking against
 		Bundle checkingBundle = bundleContext.getBundle("file:" + path);
-
+		System.out.println("The path: " + path);
 		JarToClasses checkingJar = new JarToClasses(path);
 		ArrayList<Class<?>> classesToCheck = new ArrayList<Class<?>>();
+		Class<?> activator = null;
 		for(Class<?> clazz : checkingJar.classes){
 			if(clazz.getName().contains("Impl")){
 				classesToCheck.add(clazz);
+			} else if(clazz.getName().contains(".Activator")){
+				activator = clazz; //By definition there is only one activator per bundle
 			}
 		}
 		System.out.println("We have " + classesToCheck.size() + " classes to look for which is: " + classesToCheck.get(0));
@@ -329,7 +334,9 @@ public class ShellCommands {
 			}
 		} else {//When the interface isn't internal
 			//Need to find the results of finding the interfaces in external bundles
-			//TODO External checking
+			//USe service references from the service register, if bundle uses service, check that this is used correctly.
+			
+			//TODO External checking -- change for checking service refs
 			try {
 				checkingBundle.update();
 			} catch (BundleException e) {
@@ -373,6 +380,31 @@ public class ShellCommands {
 					}
 				}
 			}
+			ArrayList<Boolean> servicesUsedCorrectly = new ArrayList<Boolean>();
+			for(int i= 0; i < classesToCheck.size(); i++ ){
+				
+				 String[] classRoots = classesToCheck.get(i).getName().split("\\.");
+				 String classRoot = null;
+				 for(int j= 0; j < classRoots.length-1;j++){
+					 classRoot += classRoots[i];
+				 }
+				 String activatorRoot = null;
+				 String[] activatorRoots = activator.getName().split("\\.");
+				 for(int j= 0; j < activatorRoots.length-1;j++){
+					 activatorRoot += activatorRoots[i];
+				 }
+				if(activatorRoot.equals(classRoot)){
+					//If they have the same class root name, then they are from the same package, 
+					//the implementing class and the activator that registers the service
+					boolean isServiceUsedCorrectly = checkServices(checkingBundle, activator.getName(), classesToCheck.get(i));
+					servicesUsedCorrectly.add(isServiceUsedCorrectly);
+				}
+			}
+			if(servicesUsedCorrectly.contains(Boolean.TRUE)){
+				System.out.println("Service uses the correct package in implementation and is safe");
+				return;//No need to do more checks
+			}
+			//More checks needed if no trues are returned from servicesUSed correctly.
 			System.out.println("Finished getting packages to check, we have " + packageNames.size() + " packages to check, which is "+ packageNames.get(0));
 			System.out.println("Finished getting bundles to check, we have " + bundlesToCheck.size() + " bundles to check, which is: " + bundlesToCheck.get(0));
 			//Now have the bundles we need to check by comparing the Import and Export package headers.
@@ -506,5 +538,24 @@ public class ShellCommands {
 
 		return false;
 
+	}
+	boolean checkServices(Bundle bundle, String clazz, Class<?> implClazz){
+		//@params bundle: The bundle which has the implementing class
+		//clazz: The class that registers the service
+		//implClazz: The class that is implementing the bundle
+		//This method is for checking the service usage of the bundle that is being checked
+		BundleContext bc = bundle.getBundleContext();
+		ServiceReference<?> serviceRef = null;
+		//Get the service reference for the service registered by the package that is from the activator of the package
+		//e.g. tutorial.example.Activator
+		serviceRef =  bc.getServiceReference(clazz);
+		
+		if(serviceRef.isAssignableTo(bundle, implClazz.getName())){
+			//if true then service is implemented correctly
+			//isAssignableTo compares the package used to see that the bundle is using the correct package in their implementation
+			System.out.println(bundle.getSymbolicName() + " has implemented " + serviceRef.toString() + " correctly in "+ implClazz.getName());
+			return true;
+		}
+		return false;
 	}
 }
