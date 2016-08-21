@@ -62,6 +62,7 @@ public class JarToClasses {
 		classes = new ArrayList<Class<?>>();
 		//HashMap<String,String> manifest;
 		
+		
 		try {
 			URL[] urls = { new URL("jar:file:" + jar + "!/") };
 			URLClassLoader cl = URLClassLoader.newInstance(urls);
@@ -77,6 +78,7 @@ public class JarToClasses {
 					className = entry.getName().substring(0, entry.getName().length()-6)
 							.replace('/', '.');
 					//Class loadingAndAddingToMap = Class.forName(className);
+					
 					Class<?> loadingAndAddingToMap = cl.loadClass(className);
 					//if interface checking only, confirm class is an interface. 
 					//If not using interface checking add regardless

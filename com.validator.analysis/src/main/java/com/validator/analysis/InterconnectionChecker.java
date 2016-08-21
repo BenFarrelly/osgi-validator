@@ -170,7 +170,7 @@ public class InterconnectionChecker {
 			System.out.println("Going into the first statement");
 			return ComparisonStatus.NOT_EQUAL;
 		}
-		System.out.println("making it past the first if statement");
+		
 		//ArrayList<Method> equalMethods = new ArrayList<Method>(); 
 		//arraylist for all the equal methods, should be same size as service methods
 		int i = 0;
