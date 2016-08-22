@@ -35,10 +35,6 @@ public class MapAnalyser {
 		//After representations are made, analysis is conducted
 		
 		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = new HashMap<Class<?>, HashMap<Method, ComparisonStatus>>();
-		//Firstly declaring the two maps to be used for Analysis (Needed?)
-		ArrayListMultimap<String, ArrayList<Class<?>>> jar1Map = ArrayListMultimap.create();
-		ArrayListMultimap<String, ArrayList<Class<?>>> jar2Map = ArrayListMultimap.create();
-		
 		JarToClasses jarClasses1 = new JarToClasses(jar1);
 		JarToClasses jarClasses2 = new JarToClasses(jar2);
 		
@@ -76,6 +72,7 @@ public class MapAnalyser {
 	//	Comparing classes and taking intersection of classes in Jar file
 		//ArrayList<Class<?>> intersectionOfClasses = new ArrayList<Class<?>>();
 		for(int i = 0; i < classes1.size(); i++){
+			System.out.println("------------- We're analysing "+ classes1.get(i) + " now --------------");
 			HashMap<Method, ComparisonStatus> methodComparison;
 			Class<?> class1 = classes1.get(i);
 			if(analyzedClasses.contains(class1))
@@ -102,8 +99,7 @@ public class MapAnalyser {
 					methodComparison = methodComparator(class1, class2);
 					methodEqualityMap.put(class1,  methodComparison);
 					analyzedClasses.add(class1);
-				}
-			//TODO implement	
+				}	
 			}
 		}
 		return methodEqualityMap;
@@ -143,23 +139,29 @@ public class MapAnalyser {
 							if(returnType1.getName() == returnType2.getName()){ 
 								if(areParamsEqual(parameters, parameters2) == ComparisonStatus.EQUAL){
 									methodComparison.put(method, ComparisonStatus.EQUAL);
+									System.out.println("                  Method: " + method.getName()+ " was equal.");
 								} else if(areParamsEqual(parameters, parameters2) == ComparisonStatus.SUB_TYPED){
 									methodComparison.put(method, ComparisonStatus.SUB_TYPED);
+									System.out.println("                  Method: " + method.getName()+ " was sub typed.");
 								}
 							} else if((returnType1.getTypeName() == returnType2.getTypeName()) && 
 									areParamsEqual(parameters, parameters2) == ComparisonStatus.NOT_EQUAL){
 								if(parameters.length != parameters2.length){ //Return types are the same, parameters are not the same length, not equal
 									methodComparison.put(method, ComparisonStatus.NOT_EQUAL);
+									System.out.println("                  Method: " + method.getName()+ " was not equal.");
 								} else if(parameters.length == parameters2.length){//length is the same but received a Not_equal so must be type mismatch
 									methodComparison.put(method, ComparisonStatus.TYPE_MISMATCH);
+									System.out.println("                  Method: " + method.getName()+ " had a type mismatch.");
 								}
 								methodComparison.put(method, ComparisonStatus.NOT_EQUAL);
 							} else if(returnType1.getTypeName() != returnType2.getTypeName()){
 								//If return types are different but params are the same -> type mismatch
 								if(areParamsEqual(parameters, parameters2) == ComparisonStatus.EQUAL && !returnType1.isAssignableFrom(returnType2)){
 									methodComparison.put(method, ComparisonStatus.TYPE_MISMATCH);
+									System.out.println("                  Method: " + method.getName()+ " had a type mismatch.");
 								} else if(parameters.length != parameters2.length){
 									methodComparison.put(method, ComparisonStatus.NOT_EQUAL);
+									System.out.println("                  Method: " + method.getName()+ " was not equal.");
 
 								}
 							}
@@ -190,6 +192,7 @@ public class MapAnalyser {
 				for(Method method : methods){
 					if(!analyzedMethods.contains(method.getName())){
 						methodComparison.put(method, ComparisonStatus.NO_METHOD);
+						System.out.println("                  Method: " + method.getName()+ " does not exist in this class");
 					}
 				}
 			} else { //methods2.length is greater
@@ -202,6 +205,7 @@ public class MapAnalyser {
 				for(Method method : methods2){
 					if(!analyzedMethods.contains(method.getName())){
 						methodComparison.put(method, ComparisonStatus.NO_METHOD);
+						System.out.println("                  Method: " + method.getName()+ " does not exist in this class");
 					}
 				}
 			}
@@ -213,7 +217,7 @@ public class MapAnalyser {
 				
 				}else if(!analyzedMethods.contains(method.getName())){
 					methodComparison.put(method, ComparisonStatus.NO_METHOD);
-					
+					System.out.println("                  Method: " + method.getName()+ " does not exist in this class");
 				}
 			}
 		} else if(analyzedMethods.size() != methods2.length){
@@ -223,7 +227,7 @@ public class MapAnalyser {
 				}
 				else if(!analyzedMethods.contains(method.getName())){
 					methodComparison.put(method, ComparisonStatus.NO_METHOD);
-					
+					System.out.println("                  Method: " + method.getName()+ " does not exist in this class");
 				}
 			}
 		}

@@ -69,7 +69,9 @@ public class InterconnectionChecker {
 			}
 		}
 		if(result.contains(ComparisonStatus.NO_METHOD)){
+			//System.out.println("        Service: );
 			return ComparisonStatus.NO_METHOD;
+			
 		} else if(result.contains(ComparisonStatus.TYPE_MISMATCH)){
 			return ComparisonStatus.TYPE_MISMATCH;
 		} else if(result.contains(ComparisonStatus.SUB_TYPED)){
@@ -180,7 +182,7 @@ public class InterconnectionChecker {
 			for(Method method2 : usedMethods){
 			//	System.out.println("Making it to j = " + j++);
 				if(method.equals(method2)){
-				//	System.out.println("Method equals method2");
+					System.out.println(method.getName() +  " is equal");
 					return ComparisonStatus.EQUAL;
 					//equalMethods.add(method2);
 					
@@ -197,13 +199,16 @@ public class InterconnectionChecker {
 						if(paramsStatus != ComparisonStatus.EQUAL){
 							//return false;
 							if(paramsStatus == ComparisonStatus.SUB_TYPED){
+								System.out.println("Method: " +method.getName() +  " is sub typed");
 								return ComparisonStatus.SUB_TYPED;
 							}
 							else if(paramsStatus == ComparisonStatus.TYPE_MISMATCH){
+								System.out.println("Method: " +method.getName() +  " has a type mismatch");
 								return ComparisonStatus.TYPE_MISMATCH;
 							}
 							
 						} else {
+							System.out.println("Method: " +method.getName() +  " is equal");
 							return ComparisonStatus.EQUAL;
 							//equalMethods.add(method2);
 						}
@@ -213,10 +218,11 @@ public class InterconnectionChecker {
 						//Return types were not the same.
 						if(returnType.isAssignableFrom(returnType2) || returnType2.isAssignableFrom(returnType)){
 							//Where the types are subtypes
-							System.out.println("Making it to return 'sub_typed' ");
+							System.out.println("Method: " +method.getName() +  " is sub typed");
 							return ComparisonStatus.SUB_TYPED;
 						}
 						//the return types have different names, because they are different
+						System.out.println("Method: " +method.getName() +  " has a type mismatch");
 						return ComparisonStatus.TYPE_MISMATCH;
 							
 					}
@@ -228,6 +234,7 @@ public class InterconnectionChecker {
 
 
 			//When the interface isn't used in this class
+		System.out.println("Missing method in this class");
 			return ComparisonStatus.NO_METHOD;
 		
 		

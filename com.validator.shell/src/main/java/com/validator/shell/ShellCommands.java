@@ -55,6 +55,8 @@ public class ShellCommands {
 
 			JarToClasses jar2 = new JarToClasses(bundlePath);
 			ArrayList<Class<?>> classes2 = jar2.classes;
+			System.out.println();
+			System.out.println("--------------- We are analysing "+classes.size() + " classes ------------------");
 			HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, classes2);
 			//Now to give a response regarding the results
 			Set<Class<?>> classSet = methodEqualityMap.keySet();
@@ -62,7 +64,7 @@ public class ShellCommands {
 			Class<?> tempClass = null;
 			HashMap<Method, ComparisonStatus> tempMap;
 			int classSize = classSet.size();
-			System.out.println("We are analysing "+classSize + " classes");
+			
 			int tempClassSize = 0;
 			//System.out.println("Making it to the start of the iterating loop, should make it through" + classSize + " times");
 			//int i = 0;
@@ -76,7 +78,7 @@ public class ShellCommands {
 					//assertNotNull("Class isn't null", tempClass);
 					tempMap = methodEqualityMap.get(tempClass);
 					//This is going to get ugly
-
+					System.out.println();
 					if(tempMap.containsValue(ComparisonStatus.NO_METHOD)){
 						//ComparisonStatus classStatus = tempMap.get(tempClass);
 						System.out.println(tempClass.getName() + " has a missing method, solve this before updating bundle");
@@ -96,16 +98,19 @@ public class ShellCommands {
 					} else {
 						System.out.println("Did not have a comparison status for some reason");
 					}
-
+				
 				}
 			}
 			if(tempClassSize == classSize){
+				System.out.println();
 				System.out.println("The bundle has been validated and can be updated!");
+				System.out.println();
 				updatingBundle.update();
 				System.out.println("Updated bundle "+ bundleNumber + " to " + path + " successfully!");
-
+				System.out.println();
 				updatingBundle.start();
 				System.out.println("Bundle " + bundleNumber+ " has started successfully");
+				System.out.println();
 			} else {
 				System.out.println("Revise this bundle before updating");
 			}
@@ -155,14 +160,18 @@ public class ShellCommands {
 					break;
 				}
 			}
-			System.out.println("We are analysing "+serviceClasses.size()+ " services");
+			System.out.println();
+			System.out.println("--------------- We are analysing "+services.size() + " service(s) ------------------");
+			System.out.println();
 		//	ComparisonStatus serviceIsCorrect = null;
 			HashMap<String, ComparisonStatus> results = new HashMap<String, ComparisonStatus>();
 			if(!services.isEmpty()){
 				for(Class<?> service : services){
+					System.out.println("------------ Analysing " + service.getName() + "------------");
 					results.put(service.getName(), InterconnectionChecker.isServiceUsedCorrectly(service, path)); 
 				}
 			}
+			System.out.println();
 			int equalCount = 0;
 			for(String key : results.keySet() ){
 				if(results.get(key) == ComparisonStatus.EQUAL){
@@ -179,6 +188,7 @@ public class ShellCommands {
 				else if(results.get(key) == ComparisonStatus.NO_METHOD){
 					System.out.print("Comparison status for " + key + " was missing a method, revise this class before updating");
 				}
+				System.out.println();
 				
 			}
 			if(services.size() == equalCount){
@@ -186,9 +196,12 @@ public class ShellCommands {
 				
 				try {
 					updatingBundle.update();
-					System.out.println("Updated " + path + " was successful!");
+					System.out.println();
+					System.out.println("Updating " + path + " AKA bundle "+ updatingBundle.getBundleId()+ " was successful!");
+					System.out.println();
 					updatingBundle.start();
 					System.out.println("Bundle " + updatingBundle.getBundleId()+ " has started successfully!");
+					System.out.println();
 				} catch (BundleException e) {
 					if(e.getType() == BundleException.RESOLVE_ERROR){
 						System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
@@ -237,14 +250,18 @@ public class ShellCommands {
 			}
 			
 			//	ComparisonStatus serviceIsCorrect = null;
+			System.out.println();
+			System.out.println("--------------- We are analysing "+services.size() + " service(s) ------------------");
+			System.out.println();
 				HashMap<String, ComparisonStatus> results = new HashMap<String, ComparisonStatus>();
 				if(!services.isEmpty()){
 					for(Class<?> service : services){
+						System.out.println("------------ Analysing " + service.getName() + "------------");
 						results.put(service.getName(), InterconnectionChecker.isServiceUsedCorrectly(service, path)); 
 					}
 				} // need to make new implementation that takes a path
-			
-				System.out.println("We are analysing "+services.size()+ " service(s)");
+				System.out.println();
+				
 			//System.out.println("ComparisonStatus of this interface is: " + serviceIsCorrect);
 
 		
@@ -279,10 +296,12 @@ public class ShellCommands {
 					
 					try {
 						updatingBundle.update();
-
-						System.out.println("Bundle " + bundlePath +  " updated");
+						System.out.println();
+						System.out.println("Bundle " + bundlePath +  " AKA bundle "+ updatingBundle.getBundleId()+  " updated");
+						System.out.println();
 						updatingBundle.start();
 						System.out.println("Bundle " + updatingBundle.getBundleId() + " has started successfully!");
+						System.out.println();
 					} catch (BundleException e) {
 						if(e.getType() == BundleException.RESOLVE_ERROR){
 							System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
@@ -333,7 +352,7 @@ public class ShellCommands {
 		long time = date.getTime();
 		try{
 			Bundle checkingBundle = bundleContext.getBundle("file:" + path);
-			System.out.println("The path: " + path);
+		
 			JarToClasses checkingJar = new JarToClasses(path);
 			ArrayList<Class<?>> classesToCheck = new ArrayList<Class<?>>();
 			Class<?> activator = null;
@@ -344,31 +363,39 @@ public class ShellCommands {
 					activator = clazz; //By definition there is only one activator per bundle
 				}
 			}
-			System.out.println("We have " + classesToCheck.size() + " classes to look for which is: " + classesToCheck.get(0));
+			System.out.println("------------ We have " + classesToCheck.size() + " classe(s) to look for ----------");
+			
 			Class<?>[] interfacesToFind = classesToCheck.get(0).getInterfaces();
-			System.out.println("Now we are looking for this interface: " + interfacesToFind[0].getName()); //NEED TO FIND THIS INTERFACE
+			System.out.println("------------ Now we are looking for this interface: " + interfacesToFind[0].getName()+ " ---------"); //NEED TO FIND THIS INTERFACE
+			System.out.println();
 			List<Class<?>> interfacesList = Arrays.asList(interfacesToFind);
 			ArrayList<Class<?>> interfaces = new ArrayList<Class<?>>(interfacesList);
 			//Now to decide if in bundle.
 			if(isInBundle(interfacesToFind, checkingJar)){
-				System.out.println("The only interfaces to find are in this class already");
-				System.out.println("");
+				System.out.println("Interfaces we're searching for are all internal (in the bundle you passed)");
+				System.out.println();
 
 				ComparisonStatus serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(interfaces, path);
 				if(serviceIsCorrect == ComparisonStatus.EQUAL || serviceIsCorrect == ComparisonStatus.SUB_TYPED){
 					if(serviceIsCorrect == ComparisonStatus.EQUAL){
+						System.out.println();
 						System.out.println("Passed validation against this service, feel free to update the bundle safely");
+						System.out.println();
 						if(checkingBundle != null){
 							try {
 								checkingBundle.update();
-
-								System.out.println("Bundle " + path +  " updated");
+								
+								System.out.println("Bundle " + path +  " AKA bundle "+ checkingBundle.getBundleId()+  " updated");
+								System.out.println();
 								checkingBundle.start();
 								System.out.println("Bundle " + checkingBundle.getBundleId() + " has started successfully!");
+								System.out.println();
 							} catch (BundleException e) {
 								if(e.getType() == BundleException.RESOLVE_ERROR){
 									System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
+									System.out.println();
 									System.out.println("Bundle is installed, solve resolver issue before starting");
+									System.out.println();
 								} else {
 									System.out.println("A Bundle exception because : " + e.getType());
 									e.printStackTrace();
@@ -379,12 +406,14 @@ public class ShellCommands {
 						}
 					} else if(serviceIsCorrect == ComparisonStatus.SUB_TYPED){
 						System.out.println("Passed validation, although the service is using a subtype.");
-
+						System.out.println();
 						if(checkingBundle != null){
 							try {
 								checkingBundle.update();
 								System.out.println("Bundle " + path +  " updated");
+								System.out.println();
 								checkingBundle.start();
+								System.out.println();
 							} catch (BundleException e) {
 								if(e.getType() == BundleException.RESOLVE_ERROR){
 									System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
