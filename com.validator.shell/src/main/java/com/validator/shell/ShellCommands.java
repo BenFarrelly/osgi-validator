@@ -356,11 +356,14 @@ public class ShellCommands {
 			JarToClasses checkingJar = new JarToClasses(path);
 			ArrayList<Class<?>> classesToCheck = new ArrayList<Class<?>>();
 			Class<?> activator = null;
+			
 			for(Class<?> clazz : checkingJar.classes){
-				if(clazz.getName().contains("Impl")){
-					classesToCheck.add(clazz);
-				} else if(clazz.getName().contains(".Activator")){
-					activator = clazz; //By definition there is only one activator per bundle
+				if(clazz != null){
+					if(clazz.getName().contains("Impl")){
+						classesToCheck.add(clazz);
+					} else if(clazz.getName().contains(".Activator")){
+						activator = clazz; //By definition there is only one activator per bundle
+					}
 				}
 			}
 			System.out.println("------------ We have " + classesToCheck.size() + " classe(s) to look for ----------");
@@ -636,9 +639,11 @@ public class ShellCommands {
 	boolean isInBundle(Class<?>[] checkingInterfaces, JarToClasses jar){
 
 		for(Class<?> clazz : jar.classes){
-			for(Class<?> inter : checkingInterfaces){
-				if(inter.getName() == clazz.getName() && MapAnalyser.isClassEqual(inter, clazz)){
-					return true;
+			if(clazz != null){
+				for(Class<?> inter : checkingInterfaces){
+					if(inter.getName() == clazz.getName() && MapAnalyser.isClassEqual(inter, clazz)){ //throws NullPointer
+						return true;
+					}
 				}
 			}
 		}

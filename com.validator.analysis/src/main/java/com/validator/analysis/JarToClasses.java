@@ -1,33 +1,22 @@
 package com.validator.analysis;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
-import org.osgi.framework.*;
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import org.osgi.framework.BundleContext;
 /*
  * This class exists to take a Jar file by with either a JarFile object or a path.
  * @author Benjamin Farrelly
@@ -57,7 +46,7 @@ public class JarToClasses {
 //	}
 //	
 	
-	public JarToClasses(String jar){
+	public JarToClasses(String jar) {
 		String className;
 		classes = new ArrayList<Class<?>>();
 		//HashMap<String,String> manifest;
@@ -77,16 +66,28 @@ public class JarToClasses {
 					//-6 because of .class
 					className = entry.getName().substring(0, entry.getName().length()-6)
 							.replace('/', '.');
-					//Class loadingAndAddingToMap = Class.forName(className);
+					Class<?> loadingAndAddingToMap = null;
+					try{
+						loadingAndAddingToMap = cl.loadClass(className);
+					} catch (NoClassDefFoundError e){
+						System.out.println();
+						System.out.println(className + " was not able to load, likely because a service is being implemented.");
+						System.out.println("Ensure that the required service is in OSGi before starting this bundle.");
+						System.out.println("The rest of the analysis will continue and we shall attempt to start the bundle.");
+						System.out.println();
+					} catch (ClassNotFoundException e){
+						System.out.println();
+						System.out.println(className + " was not able to load, likely because a service is being implemented.");
+						System.out.println("Ensure that the required service is in OSGi before starting this bundle.");
+						System.out.println("The rest of the analysis will continue and we shall attempt to start the bundle.");
+						System.out.println();
+					} 
 					
-					Class<?> loadingAndAddingToMap = cl.loadClass(className);
 					//if interface checking only, confirm class is an interface. 
 					//If not using interface checking add regardless
 					if((wantsInterfaces && loadingAndAddingToMap.isInterface()) || !wantsInterfaces){
 						classes.add(loadingAndAddingToMap);
 					}
-					
-					
 					
 				} else if(entry.getName().equals("META-INF/MANIFEST.MF") || entry.getName().equals("MANIFEST.MF")) {
 					
@@ -101,13 +102,9 @@ public class JarToClasses {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
 		//TODO  More methods for converting Jars?
-		MapBuilder.putClassesIntoGlobalMap(classes);
+		//MapBuilder.putClassesIntoGlobalMap(classes);
 		
 		
 	}

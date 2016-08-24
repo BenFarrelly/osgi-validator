@@ -1,6 +1,6 @@
 com/validator/analysis/MapAnalyser.class
-com/validator/analysis/MapBuilder.class
 com/validator/analysis/AnalysisStarter.class
 com/validator/analysis/InterconnectionChecker.class
 com/validator/analysis/MapAnalyser$ComparisonStatus.class
+com/validator/analysis/MapBuilder.class
 com/validator/analysis/JarToClasses.class
