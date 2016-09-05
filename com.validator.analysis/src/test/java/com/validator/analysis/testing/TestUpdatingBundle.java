@@ -183,5 +183,35 @@ public class TestUpdatingBundle {
 			//assertTrue("Map contains EQUAL comparison status", tempMap.containsValue(ComparisonStatus.EQUAL));
 		}
 	}
-
+	@Test
+	public void testOnLargerJar(){
+		JarToClasses j2c = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.org.htmlparser-1.6.0.jar");
+		ArrayList<Class<?>> classes = j2c.classes;
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, classes);
+		
+		//first check
+		assertNotNull("The map contains equalities", methodEqualityMap.keySet());
+		assertTrue("The map doesn't have the number of classes it should", methodEqualityMap.keySet().size() > 0);
+		//Following two assert statements checking if the mapp inccorrectly has null values 
+		assertFalse("The map keys do not contain null values", methodEqualityMap.keySet().contains(null));
+		assertFalse("The may values do not contain null values", methodEqualityMap.values().contains(null));
+		//assertTrue("The map has the corresponding value for the key")
+		
+		//More robust test for getting key(class) for getting the hashmap, confirming the hashmap has a comparision value with a method
+		Set<Class<?>> classSet = methodEqualityMap.keySet();
+		Iterator<Class<?>> classIter = classSet.iterator();
+		Class<?> tempClass = null;
+		HashMap<Method, ComparisonStatus> tempMap;
+		while(classIter.hasNext()){
+			tempClass = classIter.next();
+			assertNotNull("Class isn't null", tempClass);
+			tempMap = methodEqualityMap.get(tempClass);
+			
+			assertFalse("Map does not contain anything other than EQUAL (NO_METHOD)", tempMap.containsValue(ComparisonStatus.NO_METHOD));
+			assertFalse("Map does not contain anything other than EQUAL (NOT_EQUAL)", tempMap.containsValue(ComparisonStatus.NOT_EQUAL));
+			assertFalse("Map does not contain anything other than EQUAL (SUB TYPED)", tempMap.containsValue(ComparisonStatus.SUB_TYPED));
+			assertFalse("Map does not contain anything other than EQUAL (TYPE MISMATCH)", tempMap.containsValue(ComparisonStatus.TYPE_MISMATCH));
+			assertTrue("Map does not have EQUAL comparison status", tempMap.containsValue(ComparisonStatus.EQUAL));
+		}
+	}
 }

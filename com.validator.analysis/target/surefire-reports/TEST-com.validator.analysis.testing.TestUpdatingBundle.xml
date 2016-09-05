@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.validator.analysis.testing.TestUpdatingBundle" time="0.037" tests="4" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.validator.analysis.testing.TestUpdatingBundle" time="0.409" tests="5" errors="0" skipped="0" failures="3">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_73.jdk/Contents/Home/jre/lib"/>
@@ -26,7 +26,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/Ben/eclipse/validator/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf7534326622792494048.tmp"/>
+    <property name="classworlds.conf" value="/Users/Ben/eclipse/validator/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf7957354447174221911.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/Ben/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -44,7 +44,7 @@
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_73.jdk/Contents/Home/jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B install"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B test"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
@@ -62,8 +62,1511 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testSubTypedMethodBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.012"/>
-  <testcase name="testForTypeMismatch" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.008"/>
+  <testcase name="testSubTypedMethodBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.035">
+    <failure message="Nothing was subtyped :(" type="java.lang.AssertionError">java.lang.AssertionError: Nothing was subtyped :(
+	at com.validator.analysis.testing.TestUpdatingBundle.testSubTypedMethodBundle(TestUpdatingBundle.java:142)
+</failure>
+    <system-out><![CDATA[------------- We're analysing class tutorial.example6_subtyped.Activator$SpellCheckerImpl now --------------
+------------- We're analysing class tutorial.example6_subtyped.Activator now --------------
+                  Method: start was equal.
+                  Method: stop was equal.
+                  Method: serviceChanged was equal.
+------------- We're analysing interface tutorial.example6_subtyped.service.SpellChecker now --------------
+]]></system-out>
+  </testcase>
+  <testcase name="testForTypeMismatch" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.014">
+    <failure message="Map does not contain anything other than EQUAL (NO_METHOD)" type="java.lang.AssertionError">java.lang.AssertionError: Map does not contain anything other than EQUAL (NO_METHOD)
+	at com.validator.analysis.testing.TestUpdatingBundle.testForTypeMismatch(TestUpdatingBundle.java:175)
+</failure>
+    <system-out><![CDATA[------------- We're analysing class tutorial.example6_typemismatch.Activator$SpellCheckerImpl now --------------
+                  Method: check does not exist in this class
+------------- We're analysing class tutorial.example6_typemismatch.Activator now --------------
+                  Method: start was equal.
+                  Method: stop was equal.
+                  Method: serviceChanged was equal.
+------------- We're analysing interface tutorial.example6_typemismatch.service.SpellChecker now --------------
+                  Method: check does not exist in this class
+]]></system-out>
+  </testcase>
+  <testcase name="testOnLargerJar" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.349">
+    <failure message="Map does not have EQUAL comparison status" type="java.lang.AssertionError">java.lang.AssertionError: Map does not have EQUAL comparison status
+	at com.validator.analysis.testing.TestUpdatingBundle.testOnLargerJar(TestUpdatingBundle.java:214)
+</failure>
+    <system-out><![CDATA[------------- We're analysing class org.htmlparser.Attribute now --------------
+                  Method: toString was equal.
+                  Method: toString was equal.
+                  Method: getLength was equal.
+                  Method: getName was equal.
+                  Method: getName was equal.
+                  Method: isEmpty was equal.
+                  Method: getValue was equal.
+                  Method: getValue was equal.
+                  Method: setName was equal.
+                  Method: setValue was equal.
+                  Method: isWhitespace was equal.
+                  Method: setQuote was equal.
+                  Method: getQuote was equal.
+                  Method: getQuote was equal.
+                  Method: getAssignment was equal.
+                  Method: getAssignment was equal.
+                  Method: setAssignment was equal.
+                  Method: getRawValue was equal.
+                  Method: getRawValue was equal.
+                  Method: setRawValue was equal.
+                  Method: isStandAlone was equal.
+                  Method: isValued was equal.
+------------- We're analysing interface org.htmlparser.Node now --------------
+                  Method: toString was equal.
+                  Method: clone was equal.
+                  Method: getParent was equal.
+                  Method: accept was equal.
+                  Method: setParent was equal.
+                  Method: getChildren was equal.
+                  Method: toHtml was equal.
+                  Method: toHtml was equal.
+                  Method: toPlainTextString was equal.
+                  Method: collectInto was equal.
+                  Method: getStartPosition was equal.
+                  Method: setStartPosition was equal.
+                  Method: getEndPosition was equal.
+                  Method: setEndPosition was equal.
+                  Method: getPage was equal.
+                  Method: setPage was equal.
+                  Method: getFirstChild was equal.
+                  Method: getLastChild was equal.
+                  Method: getPreviousSibling was equal.
+                  Method: getNextSibling was equal.
+                  Method: getText was equal.
+                  Method: setText was equal.
+                  Method: doSemanticAction was equal.
+                  Method: setChildren was equal.
+------------- We're analysing interface org.htmlparser.NodeFactory now --------------
+                  Method: createStringNode was equal.
+                  Method: createRemarkNode was equal.
+                  Method: createTagNode was equal.
+------------- We're analysing interface org.htmlparser.NodeFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.Parser now --------------
+                  Method: main was equal.
+                  Method: getURL was equal.
+                  Method: elements was equal.
+                  Method: reset was equal.
+                  Method: parse was equal.
+                  Method: getEncoding was equal.
+                  Method: getVersion was equal.
+                  Method: getVersionNumber was equal.
+                  Method: getConnectionManager was equal.
+                  Method: setConnectionManager was equal.
+                  Method: createParser was equal.
+                  Method: setResource was equal.
+                  Method: setConnection was equal.
+                  Method: setEncoding was equal.
+                  Method: setLexer was equal.
+                  Method: getLexer was equal.
+                  Method: getNodeFactory was equal.
+                  Method: setNodeFactory was equal.
+                  Method: setFeedback was equal.
+                  Method: getFeedback was equal.
+                  Method: visitAllNodesWith was equal.
+                  Method: setInputHTML was equal.
+                  Method: extractAllNodesThatMatch was equal.
+                  Method: preConnect was equal.
+                  Method: postConnect was equal.
+                  Method: getConnection was equal.
+                  Method: setURL was equal.
+------------- We're analysing class org.htmlparser.PrototypicalNodeFactory now --------------
+                  Method: remove was equal.
+                  Method: get was equal.
+                  Method: put was equal.
+                  Method: clear was equal.
+                  Method: createStringNode was equal.
+                  Method: createRemarkNode was equal.
+                  Method: createTagNode was equal.
+                  Method: getTagNames was equal.
+                  Method: registerTag was equal.
+                  Method: unregisterTag was equal.
+                  Method: registerTags was equal.
+                  Method: getTextPrototype was equal.
+                  Method: setTextPrototype was equal.
+                  Method: getRemarkPrototype was equal.
+                  Method: setRemarkPrototype was equal.
+                  Method: getTagPrototype was equal.
+                  Method: setTagPrototype was equal.
+------------- We're analysing interface org.htmlparser.Remark now --------------
+                  Method: getText was equal.
+                  Method: setText was equal.
+------------- We're analysing interface org.htmlparser.Tag now --------------
+                  Method: getAttribute was equal.
+                  Method: isEndTag was equal.
+                  Method: getIds was equal.
+                  Method: setAttributesEx was equal.
+                  Method: setAttribute was equal.
+                  Method: setAttribute was equal.
+                  Method: removeAttribute was equal.
+                  Method: getAttributeEx was equal.
+                  Method: setAttributeEx was equal.
+                  Method: getAttributesEx was equal.
+                  Method: getTagName was equal.
+                  Method: setTagName was equal.
+                  Method: getRawTagName was equal.
+                  Method: breaksFlow was equal.
+                  Method: isEmptyXmlTag was equal.
+                  Method: setEmptyXmlTag was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getEndTag was equal.
+                  Method: setEndTag was equal.
+                  Method: getThisScanner was equal.
+                  Method: setThisScanner was equal.
+                  Method: getStartingLineNumber was equal.
+                  Method: getEndingLineNumber was equal.
+------------- We're analysing interface org.htmlparser.Text now --------------
+                  Method: getText was equal.
+                  Method: setText was equal.
+------------- We're analysing class org.htmlparser.beans.BeanyBaby now --------------
+                  Method: main was equal.
+                  Method: propertyChange was equal.
+                  Method: actionPerformed was equal.
+                  Method: mouseClicked was equal.
+                  Method: mouseEntered was equal.
+                  Method: mouseExited was equal.
+                  Method: mousePressed was equal.
+                  Method: mouseReleased was equal.
+                  Method: initComponents was equal.
+                  Method: exitForm was equal.
+                  Method: setURL was equal.
+------------- We're analysing class org.htmlparser.beans.FilterBean now --------------
+                  Method: main was equal.
+                  Method: getURL was equal.
+                  Method: addPropertyChangeListener was equal.
+                  Method: updateNodes was equal.
+                  Method: applyFilters was equal.
+                  Method: setNodes was equal.
+                  Method: getNodes was equal.
+                  Method: getFilters was equal.
+                  Method: setFilters was equal.
+                  Method: getParser was equal.
+                  Method: setParser was equal.
+                  Method: getRecursive was equal.
+                  Method: setRecursive was equal.
+                  Method: getText was equal.
+                  Method: setConnection was equal.
+                  Method: getConnection was equal.
+                  Method: setURL was equal.
+                  Method: removePropertyChangeListener was equal.
+------------- We're analysing class org.htmlparser.beans.HTMLLinkBean now --------------
+                  Method: getURL was equal.
+                  Method: propertyChange was equal.
+                  Method: addPropertyChangeListener was equal.
+                  Method: getLinks was equal.
+                  Method: getBean was equal.
+                  Method: setConnection was equal.
+                  Method: getConnection was equal.
+                  Method: getMinimumSize was equal.
+                  Method: setURL was equal.
+                  Method: removePropertyChangeListener was equal.
+------------- We're analysing class org.htmlparser.beans.HTMLTextBean now --------------
+                  Method: getURL was equal.
+                  Method: propertyChange was equal.
+                  Method: addPropertyChangeListener was equal.
+                  Method: getLinks was equal.
+                  Method: getCollapse was equal.
+                  Method: getReplaceNonBreakingSpaces was equal.
+                  Method: setLinks was equal.
+                  Method: setCollapse was equal.
+                  Method: setReplaceNonBreakingSpaces was equal.
+                  Method: getStrings was equal.
+                  Method: getBean was equal.
+                  Method: setConnection was equal.
+                  Method: getConnection was equal.
+                  Method: getMinimumSize was equal.
+                  Method: setURL was equal.
+                  Method: removePropertyChangeListener was equal.
+------------- We're analysing class org.htmlparser.beans.LinkBean now --------------
+                  Method: main was equal.
+                  Method: getURL was equal.
+                  Method: addPropertyChangeListener was equal.
+                  Method: getLinks was equal.
+                  Method: setLinks was equal.
+                  Method: setConnection was equal.
+                  Method: extractLinks was equal.
+                  Method: equivalent was equal.
+                  Method: getConnection was equal.
+                  Method: setURL was equal.
+                  Method: removePropertyChangeListener was equal.
+------------- We're analysing class org.htmlparser.beans.StringBean now --------------
+                  Method: main was equal.
+                  Method: getURL was equal.
+                  Method: collapse was equal.
+                  Method: addPropertyChangeListener was equal.
+                  Method: getLinks was equal.
+                  Method: getCollapse was equal.
+                  Method: getReplaceNonBreakingSpaces was equal.
+                  Method: setLinks was equal.
+                  Method: setCollapse was equal.
+                  Method: setReplaceNonBreakingSpaces was equal.
+                  Method: getStrings was equal.
+                  Method: setConnection was equal.
+                  Method: carriageReturn was equal.
+                  Method: extractStrings was equal.
+                  Method: updateStrings was equal.
+                  Method: setStrings was equal.
+                  Method: resetStrings was equal.
+                  Method: visitStringNode was equal.
+                  Method: visitTag was equal.
+                  Method: visitEndTag was equal.
+                  Method: getConnection was equal.
+                  Method: setURL was equal.
+                  Method: removePropertyChangeListener was equal.
+------------- We're analysing class org.htmlparser.filters.AndFilter now --------------
+                  Method: accept was equal.
+                  Method: getPredicates was equal.
+                  Method: setPredicates was equal.
+------------- We're analysing class org.htmlparser.filters.CssSelectorNodeFilter$AdjacentFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.filters.CssSelectorNodeFilter$AttribMatchFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.filters.CssSelectorNodeFilter$HasAncestorFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.filters.CssSelectorNodeFilter$YesFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.filters.CssSelectorNodeFilter now --------------
+                  Method: accept was equal.
+                  Method: nextToken was equal.
+                  Method: parse was equal.
+                  Method: unescape was equal.
+                  Method: parsePseudoClass was equal.
+                  Method: parseAttributeExp was equal.
+                  Method: parseSimple was equal.
+------------- We're analysing class org.htmlparser.filters.HasAttributeFilter now --------------
+                  Method: accept was equal.
+                  Method: getAttributeName was equal.
+                  Method: getAttributeValue was equal.
+                  Method: setAttributeValue was equal.
+                  Method: setAttributeName was equal.
+------------- We're analysing class org.htmlparser.filters.HasChildFilter now --------------
+                  Method: accept was equal.
+                  Method: getRecursive was equal.
+                  Method: setRecursive was equal.
+                  Method: getChildFilter was equal.
+                  Method: setChildFilter was equal.
+------------- We're analysing class org.htmlparser.filters.HasParentFilter now --------------
+                  Method: accept was equal.
+                  Method: getRecursive was equal.
+                  Method: setRecursive was equal.
+                  Method: getParentFilter was equal.
+                  Method: setParentFilter was equal.
+------------- We're analysing class org.htmlparser.filters.HasSiblingFilter now --------------
+                  Method: accept was equal.
+                  Method: getSiblingFilter was equal.
+                  Method: setSiblingFilter was equal.
+------------- We're analysing class org.htmlparser.filters.IsEqualFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.filters.LinkRegexFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.filters.LinkStringFilter now --------------
+                  Method: accept was equal.
+------------- We're analysing class org.htmlparser.filters.NodeClassFilter now --------------
+                  Method: accept was equal.
+                  Method: getMatchClass was equal.
+                  Method: setMatchClass was equal.
+------------- We're analysing class org.htmlparser.filters.NotFilter now --------------
+                  Method: accept was equal.
+                  Method: getPredicate was equal.
+                  Method: setPredicate was equal.
+------------- We're analysing class org.htmlparser.filters.OrFilter now --------------
+                  Method: accept was equal.
+                  Method: getPredicates was equal.
+                  Method: setPredicates was equal.
+------------- We're analysing class org.htmlparser.filters.RegexFilter now --------------
+                  Method: accept was equal.
+                  Method: getPattern was equal.
+                  Method: setPattern was equal.
+                  Method: getStrategy was equal.
+                  Method: setStrategy was equal.
+------------- We're analysing class org.htmlparser.filters.StringFilter now --------------
+                  Method: accept was equal.
+                  Method: getCaseSensitive was equal.
+                  Method: setCaseSensitive was equal.
+                  Method: getPattern was equal.
+                  Method: setPattern was equal.
+                  Method: setUpperPattern was equal.
+                  Method: getLocale was equal.
+                  Method: setLocale was equal.
+------------- We're analysing class org.htmlparser.filters.TagNameFilter now --------------
+                  Method: getName was equal.
+                  Method: accept was equal.
+                  Method: setName was equal.
+------------- We're analysing class org.htmlparser.filters.XorFilter now --------------
+                  Method: accept was equal.
+                  Method: getPredicates was equal.
+                  Method: setPredicates was equal.
+------------- We're analysing class org.htmlparser.http.ConnectionManager now --------------
+                  Method: encode was equal.
+                  Method: getLocation was equal.
+                  Method: openConnection was equal.
+                  Method: openConnection was equal.
+                  Method: saveCookies was equal.
+                  Method: generateCookieProperty was equal.
+                  Method: parseCookies was equal.
+                  Method: setUser was equal.
+                  Method: getDomain was equal.
+                  Method: fixSpaces was equal.
+                  Method: addCookies was equal.
+                  Method: addCookies was equal.
+                  Method: getRedirectionProcessingEnabled was equal.
+                  Method: getMonitor was equal.
+                  Method: getPassword was equal.
+                  Method: setPassword was equal.
+                  Method: getCookieProcessingEnabled was equal.
+                  Method: setCookie was equal.
+                  Method: getProxyUser was equal.
+                  Method: setProxyUser was equal.
+                  Method: getProxyPassword was equal.
+                  Method: setProxyPassword was equal.
+                  Method: getUser was equal.
+                  Method: getProxyHost was equal.
+                  Method: setProxyHost was equal.
+                  Method: getProxyPort was equal.
+                  Method: setProxyPort was equal.
+                  Method: setDefaultRequestProperties was equal.
+                  Method: setRequestProperties was equal.
+                  Method: setMonitor was equal.
+                  Method: setRedirectionProcessingEnabled was equal.
+                  Method: setCookieProcessingEnabled was equal.
+                  Method: getDefaultRequestProperties was equal.
+                  Method: getRequestProperties was equal.
+------------- We're analysing interface org.htmlparser.http.ConnectionMonitor now --------------
+                  Method: preConnect was equal.
+                  Method: postConnect was equal.
+------------- We're analysing class org.htmlparser.http.Cookie now --------------
+                  Method: toString was equal.
+                  Method: clone was equal.
+                  Method: getName was equal.
+                  Method: getValue was equal.
+                  Method: setValue was equal.
+                  Method: getPath was equal.
+                  Method: getVersion was equal.
+                  Method: getDomain was equal.
+                  Method: getExpiryDate was equal.
+                  Method: setPath was equal.
+                  Method: getSecure was equal.
+                  Method: isToken was equal.
+                  Method: setExpiryDate was equal.
+                  Method: setDomain was equal.
+                  Method: setSecure was equal.
+                  Method: setVersion was equal.
+                  Method: getComment was equal.
+                  Method: setComment was equal.
+------------- We're analysing class org.htmlparser.http.HttpHeader now --------------
+                  Method: getRequestHeader was equal.
+                  Method: getResponseHeader was equal.
+------------- We're analysing class org.htmlparser.lexer.Cursor now --------------
+                  Method: toString was equal.
+                  Method: compare was equal.
+                  Method: advance was equal.
+                  Method: getPosition was equal.
+                  Method: setPosition was equal.
+                  Method: retreat was equal.
+                  Method: getPage was equal.
+                  Method: dup was equal.
+------------- We're analysing class org.htmlparser.lexer.InputStreamSource now --------------
+                  Method: offset was equal.
+                  Method: readObject was equal.
+                  Method: writeObject was equal.
+                  Method: read was equal.
+                  Method: read was equal.
+                  Method: read was equal.
+                  Method: destroy was equal.
+                  Method: close was equal.
+                  Method: fill was equal.
+                  Method: mark was equal.
+                  Method: skip was equal.
+                  Method: available was equal.
+                  Method: markSupported was equal.
+                  Method: reset was equal.
+                  Method: getEncoding was equal.
+                  Method: ready was equal.
+                  Method: getCharacter was equal.
+                  Method: getCharacters was equal.
+                  Method: getCharacters was equal.
+                  Method: getStream was equal.
+                  Method: setEncoding was equal.
+                  Method: getString was equal.
+                  Method: unread was equal.
+------------- We're analysing class org.htmlparser.lexer.Lexer now --------------
+                  Method: main was equal.
+                  Method: reset was equal.
+                  Method: empty was equal.
+                  Method: whitespace was equal.
+                  Method: createStringNode was equal.
+                  Method: createRemarkNode was equal.
+                  Method: createTagNode was equal.
+                  Method: getVersion was equal.
+                  Method: getPosition was equal.
+                  Method: setPosition was equal.
+                  Method: getPage was equal.
+                  Method: setPage was equal.
+                  Method: getNodeFactory was equal.
+                  Method: setNodeFactory was equal.
+                  Method: makeString was equal.
+                  Method: parseCDATA was equal.
+                  Method: parseCDATA was equal.
+                  Method: scanJIS was equal.
+                  Method: parseString was equal.
+                  Method: naked was equal.
+                  Method: getCurrentLine was equal.
+                  Method: getCurrentLineNumber was equal.
+                  Method: parseRemark was equal.
+                  Method: makeRemark was equal.
+                  Method: parseJsp was equal.
+                  Method: standalone was equal.
+                  Method: single_quote was equal.
+                  Method: double_quote was equal.
+                  Method: parseTag was equal.
+                  Method: makeTag was equal.
+                  Method: parsePI was equal.
+                  Method: setCursor was equal.
+                  Method: getCursor was equal.
+                  Method: nextNode was equal.
+                  Method: nextNode was equal.
+------------- We're analysing class org.htmlparser.lexer.Page now --------------
+                  Method: finalize was equal.
+                  Method: toString was equal.
+                  Method: readObject was equal.
+                  Method: writeObject was equal.
+                  Method: close was equal.
+                  Method: reset was equal.
+                  Method: getEncoding was equal.
+                  Method: getCharacter was equal.
+                  Method: getSource was equal.
+                  Method: row was equal.
+                  Method: row was equal.
+                  Method: column was equal.
+                  Method: column was equal.
+                  Method: setUrl was equal.
+                  Method: getUrl was equal.
+                  Method: getText was equal.
+                  Method: getText was equal.
+                  Method: getText was equal.
+                  Method: getText was equal.
+                  Method: getText was equal.
+                  Method: getConnectionManager was equal.
+                  Method: setConnectionManager was equal.
+                  Method: setConnection was equal.
+                  Method: setEncoding was equal.
+                  Method: getCharset was equal.
+                  Method: findCharset was equal.
+                  Method: getLine was equal.
+                  Method: getLine was equal.
+                  Method: ungetCharacter was equal.
+                  Method: getBaseUrl was equal.
+                  Method: setBaseUrl was equal.
+                  Method: constructUrl was equal.
+                  Method: constructUrl was equal.
+                  Method: getAbsoluteURL was equal.
+                  Method: getAbsoluteURL was equal.
+                  Method: getConnection was equal.
+                  Method: getContentType was equal.
+------------- We're analysing class org.htmlparser.lexer.PageAttribute now --------------
+                  Method: getLength was equal.
+                  Method: getName was equal.
+                  Method: getName was equal.
+                  Method: isEmpty was equal.
+                  Method: getValue was equal.
+                  Method: getValue was equal.
+                  Method: init was equal.
+                  Method: isWhitespace was equal.
+                  Method: getAssignment was equal.
+                  Method: getAssignment was equal.
+                  Method: getRawValue was equal.
+                  Method: getRawValue was equal.
+                  Method: isStandAlone was equal.
+                  Method: isValued was equal.
+                  Method: getPage was equal.
+                  Method: setPage was equal.
+                  Method: getNameStartPosition was equal.
+                  Method: setNameStartPosition was equal.
+                  Method: getNameEndPosition was equal.
+                  Method: setNameEndPosition was equal.
+                  Method: getValueStartPosition was equal.
+                  Method: setValueStartPosition was equal.
+                  Method: getValueEndPosition was equal.
+                  Method: setValueEndPosition was equal.
+------------- We're analysing class org.htmlparser.lexer.PageIndex now --------------
+                  Method: add was equal.
+                  Method: add was equal.
+                  Method: remove was equal.
+                  Method: remove was equal.
+                  Method: get was equal.
+                  Method: size was equal.
+                  Method: elementAt was equal.
+                  Method: first was equal.
+                  Method: capacity was equal.
+                  Method: removeElementAt was equal.
+                  Method: insertElementAt was equal.
+                  Method: swap was equal.
+                  Method: row was equal.
+                  Method: row was equal.
+                  Method: column was equal.
+                  Method: column was equal.
+                  Method: getPage was equal.
+                  Method: bsearch was equal.
+                  Method: bsearch was equal.
+                  Method: fetch was equal.
+                  Method: last was equal.
+------------- We're analysing class org.htmlparser.lexer.Source now --------------
+                  Method: offset was equal.
+                  Method: read was equal.
+                  Method: read was equal.
+                  Method: read was equal.
+                  Method: destroy was equal.
+                  Method: close was equal.
+                  Method: mark was equal.
+                  Method: skip was equal.
+                  Method: available was equal.
+                  Method: markSupported was equal.
+                  Method: reset was equal.
+                  Method: getEncoding was equal.
+                  Method: ready was equal.
+                  Method: getCharacter was equal.
+                  Method: getCharacters was equal.
+                  Method: getCharacters was equal.
+                  Method: setEncoding was equal.
+                  Method: getString was equal.
+                  Method: unread was equal.
+------------- We're analysing class org.htmlparser.lexer.Stream now --------------
+                  Method: run was equal.
+                  Method: read was equal.
+                  Method: close was equal.
+                  Method: fill was equal.
+                  Method: mark was equal.
+                  Method: available was equal.
+                  Method: markSupported was equal.
+                  Method: reset was equal.
+------------- We're analysing class org.htmlparser.lexer.StringSource now --------------
+                  Method: offset was equal.
+                  Method: read was equal.
+                  Method: read was equal.
+                  Method: read was equal.
+                  Method: destroy was equal.
+                  Method: close was equal.
+                  Method: mark was equal.
+                  Method: skip was equal.
+                  Method: available was equal.
+                  Method: markSupported was equal.
+                  Method: reset was equal.
+                  Method: getEncoding was equal.
+                  Method: ready was equal.
+                  Method: getCharacter was equal.
+                  Method: getCharacters was equal.
+                  Method: getCharacters was equal.
+                  Method: setEncoding was equal.
+                  Method: getString was equal.
+                  Method: unread was equal.
+------------- We're analysing class org.htmlparser.nodes.AbstractNode now --------------
+                  Method: toString was equal.
+                  Method: clone was equal.
+                  Method: getParent was equal.
+                  Method: accept was equal.
+                  Method: setParent was equal.
+                  Method: getChildren was equal.
+                  Method: toHtml was equal.
+                  Method: toHtml was equal.
+                  Method: toPlainTextString was equal.
+                  Method: collectInto was equal.
+                  Method: getStartPosition was equal.
+                  Method: setStartPosition was equal.
+                  Method: getEndPosition was equal.
+                  Method: setEndPosition was equal.
+                  Method: getPage was equal.
+                  Method: setPage was equal.
+                  Method: getFirstChild was equal.
+                  Method: getLastChild was equal.
+                  Method: getPreviousSibling was equal.
+                  Method: getNextSibling was equal.
+                  Method: getText was equal.
+                  Method: setText was equal.
+                  Method: doSemanticAction was equal.
+                  Method: setChildren was equal.
+------------- We're analysing class org.htmlparser.nodes.RemarkNode now --------------
+                  Method: toString was equal.
+                  Method: accept was equal.
+                  Method: toHtml was equal.
+                  Method: toPlainTextString was equal.
+                  Method: getText was equal.
+                  Method: setText was equal.
+------------- We're analysing class org.htmlparser.nodes.TagNode now --------------
+                  Method: toString was equal.
+                  Method: accept was equal.
+                  Method: setTagBegin was equal.
+                  Method: getTagBegin was equal.
+                  Method: setTagEnd was equal.
+                  Method: getTagEnd was equal.
+                  Method: getAttribute was equal.
+                  Method: isEndTag was equal.
+                  Method: getIds was equal.
+                  Method: setAttributesEx was equal.
+                  Method: setAttribute was equal.
+                  Method: setAttribute was equal.
+                  Method: setAttribute was equal.
+                  Method: removeAttribute was equal.
+                  Method: getAttributeEx was equal.
+                  Method: setAttributeEx was equal.
+                  Method: getAttributesEx was equal.
+                  Method: getTagName was equal.
+                  Method: setTagName was equal.
+                  Method: getRawTagName was equal.
+                  Method: breaksFlow was equal.
+                  Method: isEmptyXmlTag was equal.
+                  Method: setEmptyXmlTag was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getEndTag was equal.
+                  Method: setEndTag was equal.
+                  Method: getThisScanner was equal.
+                  Method: setThisScanner was equal.
+                  Method: getStartingLineNumber was equal.
+                  Method: getEndingLineNumber was equal.
+                  Method: toHtml was equal.
+                  Method: toPlainTextString was equal.
+                  Method: getText was equal.
+                  Method: setText was equal.
+------------- We're analysing class org.htmlparser.nodes.TextNode now --------------
+                  Method: toString was equal.
+                  Method: accept was equal.
+                  Method: isWhiteSpace was equal.
+                  Method: toHtml was equal.
+                  Method: toPlainTextString was equal.
+                  Method: getText was equal.
+                  Method: setText was equal.
+------------- We're analysing class org.htmlparser.parserapplications.LinkExtractor now --------------
+                  Method: main was equal.
+------------- We're analysing class org.htmlparser.parserapplications.SiteCapturer$LocalBaseHrefTag now --------------
+                  Method: toHtml was equal.
+------------- We're analysing class org.htmlparser.parserapplications.SiteCapturer$LocalFrameTag now --------------
+                  Method: doSemanticAction was equal.
+------------- We're analysing class org.htmlparser.parserapplications.SiteCapturer$LocalImageTag now --------------
+                  Method: doSemanticAction was equal.
+------------- We're analysing class org.htmlparser.parserapplications.SiteCapturer$LocalLinkTag now --------------
+                  Method: doSemanticAction was equal.
+------------- We're analysing class org.htmlparser.parserapplications.SiteCapturer now --------------
+                  Method: main was equal.
+                  Method: decode was equal.
+                  Method: copy was equal.
+                  Method: getTarget was equal.
+                  Method: setTarget was equal.
+                  Method: isToBeCaptured was equal.
+                  Method: isHtml was equal.
+                  Method: getCaptureResources was equal.
+                  Method: makeLocalLink was equal.
+                  Method: setSource was equal.
+                  Method: setCaptureResources was equal.
+                  Method: capture was equal.
+                  Method: getSource was equal.
+                  Method: getFilter was equal.
+                  Method: setFilter was equal.
+                  Method: process was equal.
+------------- We're analysing class org.htmlparser.parserapplications.StringExtractor now --------------
+                  Method: main was equal.
+                  Method: extractStrings was equal.
+------------- We're analysing class org.htmlparser.parserapplications.WikiCapturer now --------------
+                  Method: main was equal.
+                  Method: isToBeCaptured was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.Filter now --------------
+                  Method: toString was equal.
+                  Method: wrap was equal.
+                  Method: deserialize was equal.
+                  Method: instantiate was equal.
+                  Method: serialize was equal.
+                  Method: setSelected was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIcon was equal.
+                  Method: getIconSpec was equal.
+                  Method: pickle was equal.
+                  Method: unpickle was equal.
+                  Method: deconstitute was equal.
+                  Method: reconstitute was equal.
+                  Method: getEnclosed was equal.
+                  Method: setExpanded was equal.
+                  Method: spaces was equal.
+                  Method: newline was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.FilterBuilder now --------------
+                  Method: main was equal.
+                  Method: getURL was equal.
+                  Method: save was equal.
+                  Method: open was equal.
+                  Method: actionPerformed was equal.
+                  Method: mouseClicked was equal.
+                  Method: mouseEntered was equal.
+                  Method: mouseExited was equal.
+                  Method: mousePressed was equal.
+                  Method: mouseReleased was equal.
+                  Method: getFilters was equal.
+                  Method: addFilter was equal.
+                  Method: exitAction was equal.
+                  Method: saveasAction was equal.
+                  Method: cutAction was equal.
+                  Method: copyAction was equal.
+                  Method: pasteAction was equal.
+                  Method: deleteAction was equal.
+                  Method: filterAction was equal.
+                  Method: fetchAction was equal.
+                  Method: executeAction was equal.
+                  Method: instructionsAction was equal.
+                  Method: filteringAction was equal.
+                  Method: tutorialAction was equal.
+                  Method: hintsAction was equal.
+                  Method: aboutAction was equal.
+                  Method: expandAction was equal.
+                  Method: collapseAction was equal.
+                  Method: expandAllAction was equal.
+                  Method: collapseAllAction was equal.
+                  Method: setupMouseListeners was equal.
+                  Method: setupDropTargets was equal.
+                  Method: relayout was equal.
+                  Method: exitApplication was equal.
+                  Method: showContextMenu was equal.
+                  Method: addSelection was equal.
+                  Method: removeSelection was equal.
+                  Method: selectSelection was equal.
+                  Method: moveSelection was equal.
+                  Method: selectionContains was equal.
+                  Method: lastSelected was equal.
+                  Method: getSelection was equal.
+                  Method: serializeSelection was equal.
+                  Method: deleteSelection was equal.
+                  Method: makeMenuButton was equal.
+                  Method: makeFilterButton was equal.
+                  Method: insertFilters was equal.
+                  Method: setBasePoint was equal.
+                  Method: getBasePoint was equal.
+                  Method: getEnclosing was equal.
+                  Method: makeProgram was equal.
+                  Method: classFromFile was equal.
+                  Method: newAction was equal.
+                  Method: openAction was equal.
+                  Method: saveAction was equal.
+                  Method: dragExit was equal.
+                  Method: dragExit was equal.
+                  Method: isSingleSelection was equal.
+                  Method: getEnclosed was equal.
+                  Method: setExpanded was equal.
+                  Method: lostOwnership was equal.
+                  Method: dragGestureRecognized was equal.
+                  Method: dragDropEnd was equal.
+                  Method: dragEnter was equal.
+                  Method: dragEnter was equal.
+                  Method: dragOver was equal.
+                  Method: dragOver was equal.
+                  Method: dropActionChanged was equal.
+                  Method: dropActionChanged was equal.
+                  Method: drop was equal.
+                  Method: windowOpened was equal.
+                  Method: windowClosing was equal.
+                  Method: windowClosed was equal.
+                  Method: windowIconified was equal.
+                  Method: windowDeiconified was equal.
+                  Method: windowActivated was equal.
+                  Method: windowDeactivated was equal.
+                  Method: mouseMoved was equal.
+                  Method: mouseDragged was equal.
+                  Method: clearSelection was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.HtmlTreeCellRenderer now --------------
+                  Method: toText was equal.
+                  Method: getTreeCellRendererComponent was equal.
+                  Method: toHtml was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.HtmlTreeModel now --------------
+                  Method: getRoot was equal.
+                  Method: getChild was equal.
+                  Method: getChildCount was equal.
+                  Method: isLeaf was equal.
+                  Method: addTreeModelListener was equal.
+                  Method: removeTreeModelListener was equal.
+                  Method: getIndexOfChild was equal.
+                  Method: valueForPathChanged was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.SubFilterList now --------------
+                  Method: toString was equal.
+                  Method: setSelected was equal.
+                  Method: getFilters was equal.
+                  Method: addFilter was equal.
+                  Method: addFilter was equal.
+                  Method: getDropTargets was equal.
+                  Method: removeFilter was equal.
+                  Method: removeFilter was equal.
+                  Method: canAccept was equal.
+                  Method: addSpacer was equal.
+                  Method: removeSpacer was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.layouts.NullLayoutManager now --------------
+                  Method: removeLayoutComponent was equal.
+                  Method: addLayoutComponent was equal.
+                  Method: addLayoutComponent was equal.
+                  Method: layoutContainer was equal.
+                  Method: invalidateLayout was equal.
+                  Method: preferredLayoutSize was equal.
+                  Method: minimumLayoutSize was equal.
+                  Method: maximumLayoutSize was equal.
+                  Method: getLayoutAlignmentX was equal.
+                  Method: getLayoutAlignmentY was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.layouts.VerticalLayoutManager now --------------
+                  Method: removeLayoutComponent was equal.
+                  Method: addLayoutComponent was equal.
+                  Method: addLayoutComponent was equal.
+                  Method: layoutContainer was equal.
+                  Method: invalidateLayout was equal.
+                  Method: preferredLayoutSize was equal.
+                  Method: minimumLayoutSize was equal.
+                  Method: maximumLayoutSize was equal.
+                  Method: getLayoutAlignmentX was equal.
+                  Method: getLayoutAlignmentY was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.AndFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.HasAttributeFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: addAttributes was equal.
+                  Method: addAttributeValues was equal.
+                  Method: insertUpdate was equal.
+                  Method: removeUpdate was equal.
+                  Method: changedUpdate was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.HasChildFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.HasParentFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.HasSiblingFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.NodeClassFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.NotFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.OrFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.RegexFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: insertUpdate was equal.
+                  Method: removeUpdate was equal.
+                  Method: changedUpdate was equal.
+                  Method: strategyToString was equal.
+                  Method: stringToStrategy was equal.
+                  Method: strategyToIndex was equal.
+                  Method: indexToStrategy was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.StringFilterWrapper now --------------
+                  Method: run was equal.
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: insertUpdate was equal.
+                  Method: removeUpdate was equal.
+                  Method: changedUpdate was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.parserapplications.filterbuilder.wrappers.TagNameFilterWrapper now --------------
+                  Method: accept was equal.
+                  Method: actionPerformed was equal.
+                  Method: addName was equal.
+                  Method: getDescription was equal.
+                  Method: getNodeFilter was equal.
+                  Method: setNodeFilter was equal.
+                  Method: getSubNodeFilters was equal.
+                  Method: setSubNodeFilters was equal.
+                  Method: toJavaCode was equal.
+                  Method: getIconSpec was equal.
+------------- We're analysing class org.htmlparser.sax.Attributes now --------------
+                  Method: getLength was equal.
+                  Method: getValue was equal.
+                  Method: getValue was equal.
+                  Method: getValue was equal.
+                  Method: getType was equal.
+                  Method: getType was equal.
+                  Method: getType was equal.
+                  Method: getURI was equal.
+                  Method: getLocalName was equal.
+                  Method: getQName was equal.
+                  Method: getIndex was equal.
+                  Method: getIndex was equal.
+------------- We're analysing class org.htmlparser.sax.Feedback now --------------
+                  Method: error was equal.
+                  Method: info was equal.
+                  Method: warning was equal.
+------------- We're analysing class org.htmlparser.sax.Locator now --------------
+                  Method: getLineNumber was equal.
+                  Method: getPublicId was equal.
+                  Method: getSystemId was equal.
+                  Method: getColumnNumber was equal.
+------------- We're analysing class org.htmlparser.sax.XMLReader now --------------
+                  Method: setProperty was equal.
+                  Method: getProperty was equal.
+                  Method: parse was equal.
+                  Method: parse was equal.
+                  Method: doSAX was equal.
+                  Method: getFeature was equal.
+                  Method: setFeature was equal.
+                  Method: setEntityResolver was equal.
+                  Method: getEntityResolver was equal.
+                  Method: setDTDHandler was equal.
+                  Method: getDTDHandler was equal.
+                  Method: setContentHandler was equal.
+                  Method: setErrorHandler was equal.
+                  Method: getErrorHandler was equal.
+                  Method: getContentHandler was equal.
+------------- We're analysing class org.htmlparser.scanners.CompositeTagScanner now --------------
+                  Method: addChild was equal.
+                  Method: scan was equal.
+                  Method: finishTag was equal.
+                  Method: createVirtualEndTag was equal.
+                  Method: isTagToBeEndedFor was equal.
+------------- We're analysing class org.htmlparser.scanners.JspScanner now --------------
+------------- We're analysing interface org.htmlparser.scanners.Scanner now --------------
+                  Method: scan was equal.
+------------- We're analysing class org.htmlparser.scanners.ScriptDecoder now --------------
+                  Method: decodeBase64 was equal.
+                  Method: Decode was equal.
+------------- We're analysing class org.htmlparser.scanners.ScriptScanner now --------------
+                  Method: scan was equal.
+------------- We're analysing class org.htmlparser.scanners.StyleScanner now --------------
+                  Method: scan was equal.
+------------- We're analysing class org.htmlparser.scanners.TagScanner now --------------
+                  Method: scan was equal.
+------------- We're analysing class org.htmlparser.tags.AppletTag now --------------
+                  Method: toString was equal.
+                  Method: getCodeBase was equal.
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: createAppletParamsTable was equal.
+                  Method: getAppletClass was equal.
+                  Method: getAppletParams was equal.
+                  Method: getArchive was equal.
+                  Method: getParameter was equal.
+                  Method: getParameterNames was equal.
+                  Method: setAppletClass was equal.
+                  Method: setAppletParams was equal.
+                  Method: setArchive was equal.
+                  Method: setCodeBase was equal.
+------------- We're analysing class org.htmlparser.tags.BaseHrefTag now --------------
+                  Method: getIds was equal.
+                  Method: doSemanticAction was equal.
+                  Method: getBaseUrl was equal.
+                  Method: setBaseUrl was equal.
+------------- We're analysing class org.htmlparser.tags.BodyTag now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getBody was equal.
+------------- We're analysing class org.htmlparser.tags.Bullet now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.BulletList now --------------
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.CompositeTag now --------------
+                  Method: toString was equal.
+                  Method: toString was equal.
+                  Method: accept was equal.
+                  Method: elements was equal.
+                  Method: children was equal.
+                  Method: getEndTag was equal.
+                  Method: setEndTag was equal.
+                  Method: getChild was equal.
+                  Method: getChildrenAsNodeArray was equal.
+                  Method: removeChild was equal.
+                  Method: putChildrenInto was equal.
+                  Method: putEndTagInto was equal.
+                  Method: searchByName was equal.
+                  Method: searchFor was equal.
+                  Method: searchFor was equal.
+                  Method: searchFor was equal.
+                  Method: searchFor was equal.
+                  Method: findPositionOf was equal.
+                  Method: findPositionOf was equal.
+                  Method: findPositionOf was equal.
+                  Method: childAt was equal.
+                  Method: getChildrenHTML was equal.
+                  Method: getChildCount was equal.
+                  Method: digupStringNode was equal.
+                  Method: getStringText was equal.
+                  Method: toHtml was equal.
+                  Method: toPlainTextString was equal.
+                  Method: collectInto was equal.
+                  Method: getText was equal.
+------------- We're analysing class org.htmlparser.tags.DefinitionList now --------------
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.DefinitionListBullet now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.Div now --------------
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.DoctypeTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+------------- We're analysing class org.htmlparser.tags.FormTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getFormInputs was equal.
+                  Method: getFormTextareas was equal.
+                  Method: getFormLocation was equal.
+                  Method: setFormLocation was equal.
+                  Method: getFormMethod was equal.
+                  Method: getInputTag was equal.
+                  Method: getFormName was equal.
+                  Method: getTextAreaTag was equal.
+                  Method: extractFormLocn was equal.
+------------- We're analysing class org.htmlparser.tags.FrameSetTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getFrame was equal.
+                  Method: getFrame was equal.
+                  Method: setFrames was equal.
+                  Method: getFrames was equal.
+------------- We're analysing class org.htmlparser.tags.FrameTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getFrameLocation was equal.
+                  Method: setFrameLocation was equal.
+                  Method: getFrameName was equal.
+------------- We're analysing class org.htmlparser.tags.HeadTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.HeadingTag now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.Html now --------------
+                  Method: getIds was equal.
+------------- We're analysing class org.htmlparser.tags.ImageTag now --------------
+                  Method: getIds was equal.
+                  Method: getImageURL was equal.
+                  Method: setImageURL was equal.
+                  Method: extractImageLocn was equal.
+------------- We're analysing class org.htmlparser.tags.InputTag now --------------
+                  Method: getIds was equal.
+------------- We're analysing class org.htmlparser.tags.JspTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+------------- We're analysing class org.htmlparser.tags.LabelTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getLabel was equal.
+------------- We're analysing class org.htmlparser.tags.LinkTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getAccessKey was equal.
+                  Method: getLinkText was equal.
+                  Method: isMailLink was equal.
+                  Method: isJavascriptLink was equal.
+                  Method: isFTPLink was equal.
+                  Method: isIRCLink was equal.
+                  Method: isHTTPLink was equal.
+                  Method: isHTTPSLink was equal.
+                  Method: isHTTPLikeLink was equal.
+                  Method: setMailLink was equal.
+                  Method: setJavascriptLink was equal.
+                  Method: extractLink was equal.
+                  Method: getLink was equal.
+                  Method: setLink was equal.
+------------- We're analysing class org.htmlparser.tags.MetaTag now --------------
+                  Method: getIds was equal.
+                  Method: getHttpEquiv was equal.
+                  Method: getMetaContent was equal.
+                  Method: getMetaTagName was equal.
+                  Method: setHttpEquiv was equal.
+                  Method: setMetaTagContents was equal.
+                  Method: setMetaTagName was equal.
+                  Method: doSemanticAction was equal.
+------------- We're analysing class org.htmlparser.tags.ObjectTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getParameter was equal.
+                  Method: getParameterNames was equal.
+                  Method: createObjectParamsTable was equal.
+                  Method: getObjectClassId was equal.
+                  Method: getObjectCodeBase was equal.
+                  Method: getObjectCodeType was equal.
+                  Method: getObjectData was equal.
+                  Method: getObjectHeight was equal.
+                  Method: getObjectStandby was equal.
+                  Method: getObjectType was equal.
+                  Method: getObjectWidth was equal.
+                  Method: getObjectParams was equal.
+                  Method: setObjectClassId was equal.
+                  Method: setObjectCodeBase was equal.
+                  Method: setObjectCodeType was equal.
+                  Method: setObjectData was equal.
+                  Method: setObjectHeight was equal.
+                  Method: setObjectStandby was equal.
+                  Method: setObjectType was equal.
+                  Method: setObjectWidth was equal.
+                  Method: setObjectParams was equal.
+------------- We're analysing class org.htmlparser.tags.OptionTag now --------------
+                  Method: toString was equal.
+                  Method: getValue was equal.
+                  Method: setValue was equal.
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getOptionText was equal.
+------------- We're analysing class org.htmlparser.tags.ParagraphTag now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.ProcessingInstructionTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+------------- We're analysing class org.htmlparser.tags.ScriptTag now --------------
+                  Method: toString was equal.
+                  Method: getLanguage was equal.
+                  Method: getType was equal.
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: putChildrenInto was equal.
+                  Method: setScriptCode was equal.
+                  Method: getScriptCode was equal.
+                  Method: setLanguage was equal.
+                  Method: setType was equal.
+------------- We're analysing class org.htmlparser.tags.SelectTag now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getOptionTags was equal.
+------------- We're analysing class org.htmlparser.tags.Span now --------------
+                  Method: getIds was equal.
+------------- We're analysing class org.htmlparser.tags.StyleTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getStyleCode was equal.
+------------- We're analysing class org.htmlparser.tags.TableColumn now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.TableHeader now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.TableRow now --------------
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getColumnCount was equal.
+                  Method: getHeaderCount was equal.
+                  Method: hasHeader was equal.
+                  Method: getColumns was equal.
+                  Method: getHeaders was equal.
+------------- We're analysing class org.htmlparser.tags.TableTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getRow was equal.
+                  Method: getRowCount was equal.
+                  Method: getRows was equal.
+------------- We're analysing class org.htmlparser.tags.TextareaTag now --------------
+                  Method: getValue was equal.
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+------------- We're analysing class org.htmlparser.tags.TitleTag now --------------
+                  Method: toString was equal.
+                  Method: getIds was equal.
+                  Method: getEnders was equal.
+                  Method: getEndTagEnders was equal.
+                  Method: getTitle was equal.
+------------- We're analysing class org.htmlparser.util.ChainedException now --------------
+                  Method: printStackTrace was equal.
+                  Method: printStackTrace was equal.
+                  Method: printStackTrace was equal.
+                  Method: getThrowable was equal.
+                  Method: getMessageChain was equal.
+                  Method: getMessageList was equal.
+------------- We're analysing class org.htmlparser.util.CharacterReference now --------------
+                  Method: toString was equal.
+                  Method: compare was equal.
+                  Method: getCharacter was equal.
+                  Method: getKernel was equal.
+                  Method: setKernel was equal.
+                  Method: setCharacter was equal.
+------------- We're analysing class org.htmlparser.util.CharacterReferenceEx now --------------
+                  Method: compare was equal.
+                  Method: getKernel was equal.
+                  Method: setStart was equal.
+                  Method: setEnd was equal.
+------------- We're analysing class org.htmlparser.util.DefaultParserFeedback now --------------
+                  Method: error was equal.
+                  Method: info was equal.
+                  Method: warning was equal.
+------------- We're analysing class org.htmlparser.util.EncodingChangeException now --------------
+------------- We're analysing class org.htmlparser.util.FeedbackManager now --------------
+                  Method: error was equal.
+                  Method: info was equal.
+                  Method: setParserFeedback was equal.
+                  Method: warning was equal.
+------------- We're analysing class org.htmlparser.util.IteratorImpl now --------------
+                  Method: hasMoreNodes was equal.
+                  Method: nextNode was equal.
+------------- We're analysing interface org.htmlparser.util.NodeIterator now --------------
+                  Method: hasMoreNodes was equal.
+                  Method: nextNode was equal.
+------------- We're analysing class org.htmlparser.util.NodeList now --------------
+                  Method: add was equal.
+                  Method: add was equal.
+                  Method: remove was equal.
+                  Method: remove was equal.
+                  Method: toString was equal.
+                  Method: indexOf was equal.
+                  Method: contains was equal.
+                  Method: size was equal.
+                  Method: elementAt was equal.
+                  Method: elements was equal.
+                  Method: removeAll was equal.
+                  Method: toNodeArray was equal.
+                  Method: keepAllNodesThatMatch was equal.
+                  Method: keepAllNodesThatMatch was equal.
+                  Method: copyToNodeArray was equal.
+                  Method: asString was equal.
+                  Method: adjustVectorCapacity was equal.
+                  Method: newNodeArrayFor was equal.
+                  Method: toHtml was equal.
+                  Method: toHtml was equal.
+                  Method: visitAllNodesWith was equal.
+                  Method: extractAllNodesThatMatch was equal.
+                  Method: extractAllNodesThatMatch was equal.
+                  Method: prepend was equal.
+------------- We're analysing class org.htmlparser.util.NodeTreeWalker now --------------
+                  Method: reset was equal.
+                  Method: isDepthFirst was equal.
+                  Method: setDepthFirst was equal.
+                  Method: getMaxDepth was equal.
+                  Method: removeMaxDepthRestriction was equal.
+                  Method: getRootNode was equal.
+                  Method: getCurrentNode was equal.
+                  Method: setCurrentNodeAsRootNode was equal.
+                  Method: setRootNode was equal.
+                  Method: getCurrentNodeDepth was equal.
+                  Method: initRootNode was equal.
+                  Method: getNextNodeDepthFirst was equal.
+                  Method: getNextNodeBreadthFirst was equal.
+                  Method: hasMoreNodes was equal.
+                  Method: nextNode was equal.
+------------- We're analysing class org.htmlparser.util.ParserException now --------------
+------------- We're analysing interface org.htmlparser.util.ParserFeedback now --------------
+                  Method: error was equal.
+                  Method: info was equal.
+                  Method: warning was equal.
+------------- We're analysing class org.htmlparser.util.ParserUtils now --------------
+                  Method: getLinks was equal.
+                  Method: getLinks was equal.
+                  Method: removeEscapeCharacters was equal.
+                  Method: removeTrailingBlanks was equal.
+                  Method: findTypeInNode was equal.
+                  Method: splitButDigits was equal.
+                  Method: trimButDigits was equal.
+                  Method: trimButDigitsBeginEnd was equal.
+                  Method: splitSpaces was equal.
+                  Method: trimSpaces was equal.
+                  Method: trimSpacesBeginEnd was equal.
+                  Method: splitButChars was equal.
+                  Method: trimButChars was equal.
+                  Method: trimButCharsBeginEnd was equal.
+                  Method: splitChars was equal.
+                  Method: trimChars was equal.
+                  Method: trimCharsBeginEnd was equal.
+                  Method: splitTags was equal.
+                  Method: splitTags was equal.
+                  Method: splitTags was equal.
+                  Method: splitTags was equal.
+                  Method: splitTags was equal.
+                  Method: splitTags was equal.
+                  Method: trimAllTags was equal.
+                  Method: trimTags was equal.
+                  Method: trimTags was equal.
+                  Method: trimTags was equal.
+                  Method: trimTags was equal.
+                  Method: trimTags was equal.
+                  Method: trimTags was equal.
+                  Method: createParserParsingAnInputString was equal.
+                  Method: createDummyString was equal.
+                  Method: modifyDummyString was equal.
+                  Method: removeChars was equal.
+------------- We're analysing interface org.htmlparser.util.SimpleNodeIterator now --------------
+                  Method: hasMoreNodes was equal.
+                  Method: nextNode was equal.
+------------- We're analysing class org.htmlparser.util.Translate now --------------
+                  Method: main was equal.
+                  Method: decode was equal.
+                  Method: decode was equal.
+                  Method: decode was equal.
+                  Method: encode was equal.
+                  Method: encode was equal.
+                  Method: encode was equal.
+                  Method: lookup was equal.
+                  Method: lookup was equal.
+                  Method: lookup was equal.
+                  Method: lookup was equal.
+------------- We're analysing interface org.htmlparser.util.sort.Ordered now --------------
+                  Method: compare was equal.
+------------- We're analysing class org.htmlparser.util.sort.Sort now --------------
+                  Method: swap was equal.
+                  Method: swap was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: QuickSort was equal.
+                  Method: bsearch was equal.
+                  Method: bsearch was equal.
+                  Method: bsearch was equal.
+                  Method: bsearch was equal.
+                  Method: bsearch was equal.
+                  Method: bsearch was equal.
+------------- We're analysing interface org.htmlparser.util.sort.Sortable now --------------
+                  Method: first was equal.
+                  Method: swap was equal.
+                  Method: fetch was equal.
+                  Method: last was equal.
+------------- We're analysing class org.htmlparser.visitors.HtmlPage now --------------
+                  Method: setTitle was equal.
+                  Method: getBody was equal.
+                  Method: isTable was equal.
+                  Method: isBodyTag was equal.
+                  Method: isTitleTag was equal.
+                  Method: getTables was equal.
+                  Method: visitTag was equal.
+                  Method: getTitle was equal.
+------------- We're analysing class org.htmlparser.visitors.LinkFindingVisitor now --------------
+                  Method: linkTextFound was equal.
+                  Method: visitTag was equal.
+                  Method: getCount was equal.
+------------- We're analysing class org.htmlparser.visitors.NodeVisitor now --------------
+                  Method: beginParsing was equal.
+                  Method: finishedParsing was equal.
+                  Method: visitStringNode was equal.
+                  Method: visitTag was equal.
+                  Method: visitEndTag was equal.
+                  Method: visitRemarkNode was equal.
+                  Method: shouldRecurseChildren was equal.
+                  Method: shouldRecurseSelf was equal.
+------------- We're analysing class org.htmlparser.visitors.ObjectFindingVisitor now --------------
+                  Method: getTags was equal.
+                  Method: visitTag was equal.
+                  Method: getCount was equal.
+------------- We're analysing class org.htmlparser.visitors.StringFindingVisitor now --------------
+                  Method: doMultipleSearchesWithinStrings was equal.
+                  Method: stringWasFound was equal.
+                  Method: stringFoundCount was equal.
+                  Method: visitStringNode was equal.
+------------- We're analysing class org.htmlparser.visitors.TagFindingVisitor now --------------
+                  Method: getTags was equal.
+                  Method: getTagCount was equal.
+                  Method: getEndTagCount was equal.
+                  Method: visitTag was equal.
+                  Method: visitEndTag was equal.
+------------- We're analysing class org.htmlparser.visitors.TextExtractingVisitor now --------------
+                  Method: isPreTag was equal.
+                  Method: getExtractedText was equal.
+                  Method: replaceNonBreakingSpaceWithOrdinarySpace was equal.
+                  Method: visitStringNode was equal.
+                  Method: visitTag was equal.
+                  Method: visitEndTag was equal.
+------------- We're analysing class org.htmlparser.visitors.UrlModifyingVisitor now --------------
+                  Method: getModifiedResult was equal.
+                  Method: visitStringNode was equal.
+                  Method: visitTag was equal.
+                  Method: visitEndTag was equal.
+                  Method: visitRemarkNode was equal.
+]]></system-out>
+  </testcase>
   <testcase name="testExactSameBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.003"/>
-  <testcase name="testMissingMethodBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.012"/>
+  <testcase name="testMissingMethodBundle" classname="com.validator.analysis.testing.TestUpdatingBundle" time="0.007"/>
 </testsuite>
