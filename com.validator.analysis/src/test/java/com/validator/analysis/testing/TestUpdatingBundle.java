@@ -179,9 +179,10 @@ public class TestUpdatingBundle {
 				assertTrue("Map does not contain anything other than EQUAL (TYPE MISMATCH)", tempMap.containsValue(ComparisonStatus.TYPE_MISMATCH));
 				mismatchCount++;
 			}
-			assertTrue("mismatch did not exist", mismatchCount > 0);
+			
 			//assertTrue("Map contains EQUAL comparison status", tempMap.containsValue(ComparisonStatus.EQUAL));
 		}
+		assertTrue("mismatch did not exist", mismatchCount > 0);
 	}
 	@Test
 	public void testOnLargerJar(){
@@ -205,13 +206,15 @@ public class TestUpdatingBundle {
 		while(classIter.hasNext()){
 			tempClass = classIter.next();
 			assertNotNull("Class isn't null", tempClass);
-			tempMap = methodEqualityMap.get(tempClass);
 			
-			assertFalse("Map does not contain anything other than EQUAL (NO_METHOD)", tempMap.containsValue(ComparisonStatus.NO_METHOD));
-			assertFalse("Map does not contain anything other than EQUAL (NOT_EQUAL)", tempMap.containsValue(ComparisonStatus.NOT_EQUAL));
-			assertFalse("Map does not contain anything other than EQUAL (SUB TYPED)", tempMap.containsValue(ComparisonStatus.SUB_TYPED));
-			assertFalse("Map does not contain anything other than EQUAL (TYPE MISMATCH)", tempMap.containsValue(ComparisonStatus.TYPE_MISMATCH));
-			assertTrue("Map does not have EQUAL comparison status", tempMap.containsValue(ComparisonStatus.EQUAL));
+			tempMap = methodEqualityMap.get(tempClass);
+			if(!tempMap.isEmpty()){
+				assertFalse("Map does not contain anything other than EQUAL (NO_METHOD)", tempMap.containsValue(ComparisonStatus.NO_METHOD));
+				assertFalse("Map does not contain anything other than EQUAL (NOT_EQUAL)", tempMap.containsValue(ComparisonStatus.NOT_EQUAL));
+				assertFalse("Map does not contain anything other than EQUAL (SUB TYPED)", tempMap.containsValue(ComparisonStatus.SUB_TYPED));
+				assertFalse("Map does not contain anything other than EQUAL (TYPE MISMATCH)", tempMap.containsValue(ComparisonStatus.TYPE_MISMATCH));
+				assertTrue("Map does not have EQUAL comparison status", tempMap.containsValue(ComparisonStatus.EQUAL));
+			}
 		}
 	}
 }

@@ -101,11 +101,13 @@ public class MapAnalyser {
 					methodComparison = methodComparator(clazz, clazz2);
 					methodEqualityMap.put(clazz, methodComparison);
 					analyzedClasses.add(clazz);
+					break;
 				} else if(clazz.getName().substring(clazz.getName().lastIndexOf("."))
 						.equals(clazz2.getName().substring(clazz2.getName().lastIndexOf(".")))){
 					methodComparison = methodComparator(clazz, clazz2);
 					methodEqualityMap.put(clazz,  methodComparison);
 					analyzedClasses.add(clazz);
+					break;
 				}	
 			}
 		}
@@ -113,29 +115,79 @@ public class MapAnalyser {
 	}
 	private static HashMap<Method, ComparisonStatus> methodComparator(Class<?> class1, Class<?> class2) {
 		//Hashmap used, which overwrites when "putting" to the same key. Need to check this works.
+		
+		//1st Double loop, find all the equals. All those that are left in the iterator need to be categorized.
+		
+		
 		HashMap<Method, ComparisonStatus> methodComparison = new HashMap<Method, ComparisonStatus>();
-		ArrayList<Method> methods = new ArrayList<Method>(Arrays.asList(class1.getDeclaredMethods()));
-		ArrayList<Method> methods2 = new ArrayList<Method>(Arrays.asList(class2.getDeclaredMethods()));
+		ArrayList<Method> initMethods = new ArrayList<Method>(Arrays.asList(class1.getDeclaredMethods()));
+		ArrayList<Method> initMethods2 = new ArrayList<Method>(Arrays.asList(class2.getDeclaredMethods()));
+		//Remove all $ classes
+		ArrayList<Method> methods = new ArrayList<Method>();
+		ArrayList<Method> methods2 = new ArrayList<Method>();
+		for(Method method : initMethods){
+
+			if(method.getName().contains("$")){
+				String temp = method.getName().substring(method.getName().lastIndexOf('$')+1);
+				int tempInt = 0;
+				try{
+					tempInt = Integer.parseInt(temp);	
+				}catch (NumberFormatException e){
+					//Not an int
+					methods.add(method);
+				}
+			}else{
+
+				methods.add(method);
+
+
+			}
+
+		}
+		for(Method method : initMethods2){
+			if(method.getName().contains("$")){
+				String temp = method.getName().substring(method.getName().lastIndexOf('$')+1);
+				int tempInt = 0;
+				try{
+					tempInt = Integer.parseInt(temp);	
+				}catch (NumberFormatException e){
+					//Not an int
+					methods2.add(method);
+				}
+			}else{
+
+				methods2.add(method);
+
+
+			}
+
+		}
+		int originalMethodSize = methods.size();
+		int originalMethods2Size = methods2.size();
 		 //This list is to allow us to find the methods which are NO_METHOD 
 		//TODO find a better way for finding no method.
-		ArrayList<String> analyzedMethods = new ArrayList<String>();
+		ArrayList<Method> analyzedMethods = new ArrayList<Method>();
 		ArrayList<Method> equalMethods = new ArrayList<Method>();
 		for(Iterator<Method> it = methods.iterator(); it.hasNext();){
 			Method method = it.next();
-			if(method.getName().contains("$") || analyzedMethods.contains(method)) 
+			if(analyzedMethods.contains(method)) {
+				it.remove();
 				continue;
-			
+			}
 			try {
 				for(Iterator<Method> it2 =  methods2.iterator(); it2.hasNext();){
 					Method method2 = it2.next();
+					
 					//if(method2.getName().equals(method.getName())){
 					//Method method2 = class2.getDeclaredMethod(method.getName(), method.getParameterTypes());
-					if(method2.getName().contains("$") || analyzedMethods.contains(method2))
+					if(analyzedMethods.contains(method2)){
+						it2.remove();
 						continue; //Already analyzed, no need to go through and re-analyze
+					}
 
 					if(method2.equals(method)) {
 						methodComparison.put(method, ComparisonStatus.EQUAL);
-						analyzedMethods.add(method2.getName());
+						analyzedMethods.add(method);
 						System.out.println("                  Method: " + method.getName()+ " was equal.");
 						equalMethods.add(method);
 						it.remove();
@@ -151,10 +203,11 @@ public class MapAnalyser {
 							Class<?>[] parameters2 = method2.getParameterTypes();
 
 							if(returnType1.getName() == returnType2.getName()){ 
-								if(areParamsEqual(parameters, parameters2) == ComparisonStatus.EQUAL){
+								if(areParamsEqual(parameters, parameters2, returnType1, returnType2) == ComparisonStatus.EQUAL){
 									methodComparison.put(method, ComparisonStatus.EQUAL);
 									System.out.println("                  Method: " + method.getName()+ " was equal.");
 									equalMethods.add(method);
+									analyzedMethods.add(method);
 									it.remove();
 									it2.remove();
 									break;
@@ -183,7 +236,7 @@ public class MapAnalyser {
 //
 //								}
 //							}
-							analyzedMethods.add(method2.getName());
+						
 							}
 					} else {
 						//Method doesn't exist...
@@ -198,16 +251,38 @@ public class MapAnalyser {
 			}
 	
 		}
-		if(equalMethods.size() != class1.getDeclaredMethods().length){
-			//Some methods weren't equal.
+		for(Iterator<Method> it = methods.iterator(); it.hasNext();){
+			Method method = it.next();
+			if(equalMethods.contains(method)){
+				it.remove();
+				continue;
+			}
+			for(Iterator<Method> it2 = methods2.iterator(); it2.hasNext();){
+				Method method2 = it2.next();
+				//This is where other comparisons have to occur
+				if(typeMismatchChecking(method.getParameterTypes(), method2.getParameterTypes(), method.getReturnType(), method2.getReturnType()) == ComparisonStatus.SUB_TYPED){
+					System.out.println("                  Method: " + method.getName()+ " was sub typed.");
+					methodComparison.put(method, ComparisonStatus.SUB_TYPED);
+					if(!analyzedMethods.contains(method)){
+						analyzedMethods.add(method);
+					}
+				} else if(typeMismatchChecking(method.getParameterTypes(), method2.getParameterTypes(), method.getReturnType(), method2.getReturnType()) == ComparisonStatus.TYPE_MISMATCH){
+					System.out.println("                  Method: " + method.getName()+ " had a type mismatch.");
+					methodComparison.put(method, ComparisonStatus.TYPE_MISMATCH);
+					if(!analyzedMethods.contains(method)){
+						analyzedMethods.add(method);
+					}
+				}
+			}
 		}
+		
 		//-----This part will not work now with the way I'm changing the algorithm TODO: implement newer version.
-		if(methods.size() != methods2.size()){
+		/*if(methods.size() != methods2.size()){
 			
 			if(methods.size() > methods2.size()){
 				for(Method method : methods2){ 
-					if(!analyzedMethods.contains(method.getName())){
-						analyzedMethods.add(method.getName());
+					if(!analyzedMethods.contains(method)){
+						analyzedMethods.add(method);
 					
 					}
 				}
@@ -219,8 +294,8 @@ public class MapAnalyser {
 				}
 			} else { //methods2.length is greater
 				for(Method method : methods){ 
-					if(!analyzedMethods.contains(method.getName())){
-						analyzedMethods.add(method.getName());
+					if(!analyzedMethods.contains(method)){
+						analyzedMethods.add(method);
 					
 					}
 				}
@@ -252,18 +327,43 @@ public class MapAnalyser {
 					System.out.println("                  Method: " + method.getName()+ " does not exist in this class");
 				}
 			}
+		}*/
+		if(analyzedMethods.size() < originalMethodSize || analyzedMethods.size() < originalMethods2Size){
+			ArrayList<Method> missingMethods = isThereAMissingMethod(methods, methods2, analyzedMethods);
+			if(missingMethods.size() > 0){
+				for(Method missMethod : missingMethods){
+					analyzedMethods.add(missMethod);
+					methodComparison.put(missMethod, ComparisonStatus.NO_METHOD);
+				}
+			}
 		}
+		
+		
 		return methodComparison;
 	}
-	Method findNoMethod(Method[] methods, Method[] methods2){
-		ArrayList<Method> methodList = new ArrayList<Method>();
-		ArrayList<Method> methodList2 = new ArrayList<Method>();
-		for(Method method : methods){ methodList.add(method); }
-		for(Method method : methods2){ methodList2.add(method); }
-		return null;
+	
+	static ArrayList<Method> isThereAMissingMethod(ArrayList<Method> methods, ArrayList<Method> methods2, ArrayList<Method> analyzedMethods){
+		//Check to find if there is a missing method.
+		//First check if there is a difference in length, then if there's a method which isn't analysed.
+		ArrayList<Method> missingMethods = new ArrayList<Method>();
+		for(Method method : methods){
+			if(!analyzedMethods.contains(method)){ //Maybe consider doing this against methods2 instead
+				missingMethods.add(method);
+				System.out.println(" ------- " + method.getName() + "is missing...");
+			}
+		}
+		for(Method method : methods2){
+			if(!analyzedMethods.contains(method)){ //Maybe consider doing this against methods2 instead
+				missingMethods.add(method);
+				System.out.println(" ------- " + method.getName() + "is missing...");
+			}
+		}
+		
+		return missingMethods;
 	}
 	
-	static ComparisonStatus areParamsEqual(Class<?>[] params1, Class<?>[] params2){
+	static ComparisonStatus areParamsEqual(Class<?>[] params1, Class<?>[] params2, Class<?> returnType1, Class<?> returnType2){
+		//Change to make full comparison occur here TODO .
 		ArrayList<String> equalTypes = new ArrayList<String>();
 		ArrayList<Class<?>> inequalTypes = new ArrayList();
 		
@@ -287,7 +387,8 @@ public class MapAnalyser {
 				//Type mismatch? need method for type mismatch. Need to check sub typing.
 				//Call type mismatch checking, check equalTypes
 				
-				return typeMismatchChecking(params1, params2, equalTypes);
+				return null;
+						//typeMismatchChecking(params1, params2, equalTypes);
 			}
 			
 		} else {
@@ -295,25 +396,46 @@ public class MapAnalyser {
 		}	
 	}
 	
-	static ComparisonStatus typeMismatchChecking(Class<?>[] params1, Class<?>[] params2, ArrayList<String> equalTypes){
+	static ComparisonStatus typeMismatchChecking(Class<?>[] params1, Class<?>[] params2, Class<?> returnType1, Class<?> returnType2){
 		//This method is checking if the "type mismatch" can be recovered by subtyping. As in, is the class recoverable.
-		for(Class<?> type : params1){
-			if(equalTypes.contains(type)){
-				//If in list, already checked -- TODO consider not sending equal fields in the first place
-				continue;
-			} else {
+		//Will only receive a filtered list.
+		if(returnType1 != returnType2){
+		//Return types are not equal, find out if they are sub-typable or a total mismatch.
+			if(returnType1.isAssignableFrom(returnType2) || returnType2.isAssignableFrom(returnType1)){
+				return ComparisonStatus.SUB_TYPED;
+			} else { //Non-assignable, probably mismatch
+				return ComparisonStatus.TYPE_MISMATCH;
+			}
+		}else{ //Return types are equal, inequality is in the params
+			
+		
+			for(Class<?> type : params1){
+			
 				//Find out if subtype-able
 				for(Class<?> type2 : params2){
-					if(type.isAssignableFrom(type2) || type2.isAssignableFrom(type)){
+					if(type.equals(type2)){
+						continue; //Is equal, not the one we're looking for.
+					
+					}
+					
+					else if(type != type2){
+						
+					
+						if(type.isAssignableFrom(type2) || type2.isAssignableFrom(type)){
 						//if class is super class or superinterface (isAssignable from)
 						//Checks for a identity conversion or widening reference, if true it is sub typeable.
-						return ComparisonStatus.SUB_TYPED;
-					} 
+							return ComparisonStatus.SUB_TYPED;
+						} else {
+							return ComparisonStatus.TYPE_MISMATCH;
+						}
+					}
 				}
-			}
+			
 			
 		}
+		//If it somehow makes it this far...
 		return ComparisonStatus.TYPE_MISMATCH;
+		}
 	}
 	
 	public static boolean isClassEqual(Class<?> class1, Class<?> class2){

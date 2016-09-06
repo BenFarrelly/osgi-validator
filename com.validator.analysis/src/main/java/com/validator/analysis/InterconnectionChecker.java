@@ -179,8 +179,7 @@ public class InterconnectionChecker {
 		
 		//ArrayList<Method> equalMethods = new ArrayList<Method>(); 
 		//arraylist for all the equal methods, should be same size as service methods
-		int i = 0;
-		int j = 0;
+
 		for(Method method : serviceMethods){
 		//	System.out.println("Making it to i = " + i++);
 			for(Method method2 : usedMethods){
@@ -199,9 +198,10 @@ public class InterconnectionChecker {
 
 					if(returnType.getName().equals(returnType2.getName())){	
 						//System.out.println("return type name equals return type 2");
-						ComparisonStatus paramsStatus =	MapAnalyser.areParamsEqual(parameterTypes, parameterTypes2);
+						ComparisonStatus paramsStatus =	MapAnalyser.areParamsEqual(parameterTypes, parameterTypes2, returnType, returnType2);
 						if(paramsStatus != ComparisonStatus.EQUAL){
 							//return false;
+							paramsStatus = MapAnalyser.typeMismatchChecking(parameterTypes, parameterTypes2, returnType, returnType2);
 							if(paramsStatus == ComparisonStatus.SUB_TYPED){
 								System.out.println("Method: " +method.getName() +  " is sub typed");
 								return ComparisonStatus.SUB_TYPED;
