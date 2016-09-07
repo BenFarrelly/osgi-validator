@@ -66,6 +66,8 @@ public class JarToClasses {
 					//-6 because of .class
 					className = entry.getName().substring(0, entry.getName().length()-6)
 							.replace('/', '.');
+					if(className.contains("Main"))
+						continue;
 					Class<?> loadingAndAddingToMap = null;
 					try{
 						loadingAndAddingToMap = cl.loadClass(className);
@@ -82,7 +84,7 @@ public class JarToClasses {
 						System.out.println("The rest of the analysis will continue and we shall attempt to start the bundle.");
 						System.out.println();
 					} 
-					
+				
 					//if interface checking only, confirm class is an interface. 
 					//If not using interface checking add regardless
 					if((wantsInterfaces && loadingAndAddingToMap.isInterface()) || !wantsInterfaces){

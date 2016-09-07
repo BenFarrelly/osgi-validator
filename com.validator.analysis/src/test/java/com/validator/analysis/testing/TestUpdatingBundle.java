@@ -185,11 +185,11 @@ public class TestUpdatingBundle {
 		}
 		assertTrue("mismatch did not exist", mismatchCount > 0);
 	}
-	@Test
+	//@Test
 	public void testOnLargerJar(){
 		JarToClasses j2c = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.org.apache.tools.ant-1.8.3.jar");
 		ArrayList<Class<?>> classes = j2c.classes;
-		JarToClasses jar = new JarToClasses("/Users/Ben/felix-framework-5.4.0/felix-cache/bundle77/version0.0/bundle.jar");
+		JarToClasses jar = new JarToClasses("/Users/Ben/felix-framework-5.4.0/felix-cache/bundle77/version0.1/bundle.jar");
 		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, jar.classes);
 		
 		//first check

@@ -51,22 +51,23 @@ public class InterconnectionChecker {
 		//	serviceMethods.add(clazz.getDeclaredMethods());
 		//}
 		JarToClasses bundle = new JarToClasses(path);
-		Attributes attributes = bundle.attributes;
+		ArrayList<Class<?>> classes = bundle.classes;
+		//Attributes attributes = bundle.attributes;
 		//String exportPackage = attributes.getValue("Export-Package");
 
 		//if(exportPackage.contains(exportPackage))
 		//return false;
 		for(Class<?> service : services){
 			if(service != null){
-				for(Class<?> clazz : bundle.classes){
+				for(Class<?> clazz : classes){
 					if(clazz != null){
 						if(clazz.getName().equals(service.getName()) || clazz.getName().equals(service.getName()+ "Impl") ){ 
 						//if the interface or the implementing class
 							result.add(checkServiceMethods(service.getDeclaredMethods(), clazz.getDeclaredMethods()));
 	
-						} else if(clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))) 
-								|| clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))+ "Impl")){
-							result.add(checkServiceMethods(service.getDeclaredMethods(), clazz.getDeclaredMethods()));
+						//} else if(clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))) 
+						//		|| clazz.getName().substring(clazz.getName().lastIndexOf(".")).equals(service.getName().substring(service.getName().lastIndexOf("."))+ "Impl")){
+						//	result.add(checkServiceMethods(service.getDeclaredMethods(), clazz.getDeclaredMethods()));
 						}
 					}
 				}

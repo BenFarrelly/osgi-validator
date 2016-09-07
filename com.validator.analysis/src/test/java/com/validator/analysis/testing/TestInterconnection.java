@@ -2,7 +2,11 @@ package com.validator.analysis.testing;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.jar.Attributes;
 
 import org.junit.Before;
@@ -10,6 +14,7 @@ import org.junit.Test;
 
 import com.validator.analysis.InterconnectionChecker;
 import com.validator.analysis.JarToClasses;
+import com.validator.analysis.MapAnalyser;
 import com.validator.analysis.MapAnalyser.ComparisonStatus;
 
 public class TestInterconnection {
@@ -174,7 +179,7 @@ public class TestInterconnection {
 	
 	}
 	
-	@Test
+	//@Test   Test has already passed, not a problem
 	public void testSubtyping(){ //testing isServiceUsedCorrectly
 		JarToClasses jar  = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
 		String path = InterconnectionChecker.getBundlePathFromNumber(6);
@@ -203,6 +208,116 @@ public class TestInterconnection {
 		//}
 	
 	}
+//	@Test
+	public void testLarger(){
+		JarToClasses jar  = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.org.apache.tools.ant-1.8.3.jar");
+		String path = "/Users/Ben/felix-framework-5.4.0/felix-cache/bundle77/version0.1/bundle.jar";
+		//JarToClasses serviceBundle = new JarToClasses(path);
+		JarToClasses bundle = new JarToClasses(path);
+		ArrayList<Class<?>> serviceClasses = jar.classes;
+		ArrayList<Class<?>> services = new ArrayList<Class<?>>();
+		for(Class<?> clazz: serviceClasses){
+			if(clazz != null){
+				if(clazz.isInterface()){
+					services.add(clazz);
+				
+				}
+			}
+		}
+		ComparisonStatus serviceIsCorrect = null;
+		if(services.size() != 0){
+			serviceIsCorrect = InterconnectionChecker.isServiceUsedCorrectly(services, path); // need to make new implementation that takes a path
+		}
+		assertFalse("No subtype", serviceIsCorrect == ComparisonStatus.SUB_TYPED);
+		assertTrue("For some reason not equal", serviceIsCorrect == ComparisonStatus.EQUAL);
+		System.out.println("ComparisonStatus of this interface is: " + serviceIsCorrect);
+		if(serviceIsCorrect == ComparisonStatus.EQUAL){
+			System.out.println("Passed validation against this service, feel free to update the bundle safely");
+		}else if(serviceIsCorrect == ComparisonStatus.SUB_TYPED){
+			System.out.println("Passed validation, although the service is using a subtype.");
+		} else {
+			System.out.println("Service was not correct in usage, revise your usage of this service before updating.");
+		}
+		System.out.println();
+		System.out.println("--------------- We are analysing "+services.size() + " service(s) ------------------");
+		System.out.println();
+		HashMap<String, ComparisonStatus> results = new HashMap<String, ComparisonStatus>();
+		if(!services.isEmpty()){
+			for(Class<?> service : services){
+				System.out.println("------------ Analysing " + service.getName() + "------------");
+				results.put(service.getName(), InterconnectionChecker.isServiceUsedCorrectly(service, path)); 
+			}
+		} // need to make new implementation that takes a path
+		System.out.println();
+		int equalCount = 0;
+		for(String key : results.keySet() ){
+			if(results.get(key) == ComparisonStatus.EQUAL){
+				equalCount++;
+				System.out.println("Comparison status for " + key + " was equal");
+			}
+			else if(results.get(key) == ComparisonStatus.SUB_TYPED){
+				equalCount++;
+				System.out.println("Comparison status for " + key + " was sub typed");
+			}
+			else if(results.get(key) == ComparisonStatus.TYPE_MISMATCH){
+				System.out.println("Comparison status for " + key + " was Type Mismatch, revise this before updating");
+			}
+			else if(results.get(key) == ComparisonStatus.NO_METHOD){
+				System.out.println("Comparison status for " + key + " was missing a method, revise this class before updating");
+			}
+
+		}
+	
+	}
+	@Test
+	public void testLargerDiff(){
+		JarToClasses jar  = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.org.apache.tools.ant-1.8.3.jar");
+		String path = "/Users/Ben/felix-framework-5.4.0/felix-cache/bundle77/version0.1/bundle.jar";
+		//JarToClasses serviceBundle = new JarToClasses(path);
+		JarToClasses bundle = new JarToClasses(path);
+		ArrayList<Class<?>> classes = bundle.classes;
+		ArrayList<Class<?>> serviceClasses = jar.classes;
+		ArrayList<Class<?>> services = new ArrayList<Class<?>>();
+		for(Class<?> clazz: serviceClasses){
+			if(clazz != null){
+				if(clazz.isInterface()){
+					services.add(clazz);
+				
+				}
+			}
+		}
+		
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = 
+				MapAnalyser.updateJarAnalysis(services, classes);
+		Set<Class<?>> classSet = methodEqualityMap.keySet();
+		Iterator<Class<?>> classIter = classSet.iterator();
+		Class<?> tempClass = null;
+		HashMap<Method, ComparisonStatus> tempMap;
+		while(classIter.hasNext()){
+			tempClass = classIter.next();
+			assertNotNull("Class isn't null", tempClass);
+			
+			tempMap = methodEqualityMap.get(tempClass);
+			if(!tempMap.isEmpty()){
+				if(tempMap.containsValue(ComparisonStatus.NO_METHOD)){
+					Set<Method> s =tempMap.keySet();
+					for(Iterator<Method> it = s.iterator(); it.hasNext(); ){
+						Method result = it.next();
+						if(tempMap.get(result) == ComparisonStatus.NO_METHOD){
+							System.out.println(result + " is a missing method...");
+						}
+					}
+					
+				}
+				assertFalse("Map does not contain anything other than EQUAL (NO_METHOD)", tempMap.containsValue(ComparisonStatus.NO_METHOD));
+				assertFalse("Map does not contain anything other than EQUAL (NOT_EQUAL)", tempMap.containsValue(ComparisonStatus.NOT_EQUAL));
+				assertFalse("Map does not contain anything other than EQUAL (SUB TYPED)", tempMap.containsValue(ComparisonStatus.SUB_TYPED));
+				assertFalse("Map does not contain anything other than EQUAL (TYPE MISMATCH)", tempMap.containsValue(ComparisonStatus.TYPE_MISMATCH));
+				assertTrue("Map does not have EQUAL comparison status", tempMap.containsValue(ComparisonStatus.EQUAL));
+			}
+		}
+	}
+	
 	@Test
 	public void findService(){
 		
