@@ -79,11 +79,11 @@ public class MapAnalyser {
 			System.out.println("------------- We're analysing "+ clazz + " now --------------");
 			HashMap<Method, ComparisonStatus> methodComparison;
 			
-			if(analyzedClasses.contains(clazz))
+			if(analyzedClasses.contains(clazz) || clazz == null)
 				continue;
 			for(Iterator<Class<?>> it2 = classes2.iterator(); it2.hasNext();){
 				Class<?> clazz2 = it2.next();
-				if(analyzedClasses.contains(clazz) || analyzedClasses.contains(clazz2))
+				if(analyzedClasses.contains(clazz) || analyzedClasses.contains(clazz2) || clazz2 == null)
 					continue;
 				//if(className1.equals(jarClasses2.classes.get(j).getName() )){
 				//if(isClassEqual(clazz, clazz2)){	
@@ -105,13 +105,13 @@ public class MapAnalyser {
 					analyzedClasses.add(clazz);
 					
 					break;
-				} else if(clazz.getName().substring(clazz.getName().lastIndexOf("."))
-						.equals(clazz2.getName().substring(clazz2.getName().lastIndexOf(".")))){
+			/*	} else if(clazz.getName().substring(clazz.getName().lastIndexOf("."))
+						.equals(clazz2.getName().substring(clazz2.getName().lastIndexOf(".")))){ //ONLY FOR TESTING
 					methodComparison = methodComparator(clazz, clazz2);
 					methodEqualityMap.put(clazz,  methodComparison);
 					analyzedClasses.add(clazz);
 					
-					break;
+					break;*/
 				}	
 			}
 		}

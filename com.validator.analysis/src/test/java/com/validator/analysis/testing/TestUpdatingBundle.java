@@ -61,7 +61,7 @@ public class TestUpdatingBundle {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testMissingMethodBundle(){
 		JarToClasses j2c=null;
 		try{
@@ -103,7 +103,7 @@ public class TestUpdatingBundle {
 		}
 		assertTrue("No nomethods :(", noMethodCount > 0);
 	}
-	@Test 
+	//@Test 
 	public void testSubTypedMethodBundle(){ 
 		JarToClasses j2c = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6_subtyped/example6_subtyped.jar");
 		JarToClasses j2c2 = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
@@ -142,7 +142,7 @@ public class TestUpdatingBundle {
 		}
 		assertTrue("Nothing was subtyped :(", subtypedCount > 0);
 	}
-	@Test
+	//@Test
 	public void testForTypeMismatch(){
 		JarToClasses j2c = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6_typemismatch/example6_typemismatch.jar");
 		JarToClasses j2c2 = new JarToClasses("/Users/Ben/eclipse/felixtutorial/tutorial/src/tutorial/example6/example6.jar");
@@ -187,9 +187,9 @@ public class TestUpdatingBundle {
 	}
 	@Test
 	public void testOnLargerJar(){
-		JarToClasses j2c = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.javax.ws.rs-1.0.0.jar");
+		JarToClasses j2c = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.org.apache.tools.ant-1.8.3.jar");
 		ArrayList<Class<?>> classes = j2c.classes;
-		JarToClasses jar = new JarToClasses("/Users/Ben/felix-framework-5.4.0/felix-cache/bundle50/version0.0/bundle.jar");
+		JarToClasses jar = new JarToClasses("/Users/Ben/felix-framework-5.4.0/felix-cache/bundle77/version0.0/bundle.jar");
 		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, jar.classes);
 		
 		//first check
@@ -211,6 +211,16 @@ public class TestUpdatingBundle {
 			
 			tempMap = methodEqualityMap.get(tempClass);
 			if(!tempMap.isEmpty()){
+				if(tempMap.containsValue(ComparisonStatus.NO_METHOD)){
+					Set<Method> s =tempMap.keySet();
+					for(Iterator<Method> it = s.iterator(); it.hasNext(); ){
+						Method result = it.next();
+						if(tempMap.get(result) == ComparisonStatus.NO_METHOD){
+							System.out.println(result + " is a missing method...");
+						}
+					}
+					
+				}
 				assertFalse("Map does not contain anything other than EQUAL (NO_METHOD)", tempMap.containsValue(ComparisonStatus.NO_METHOD));
 				assertFalse("Map does not contain anything other than EQUAL (NOT_EQUAL)", tempMap.containsValue(ComparisonStatus.NOT_EQUAL));
 				assertFalse("Map does not contain anything other than EQUAL (SUB TYPED)", tempMap.containsValue(ComparisonStatus.SUB_TYPED));
