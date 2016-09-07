@@ -12,6 +12,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.validator.analysis.InterconnectionChecker;
 import com.validator.analysis.JarToClasses;
 import com.validator.analysis.MapAnalyser;
 import com.validator.analysis.MapAnalyser.ComparisonStatus;
@@ -186,9 +187,10 @@ public class TestUpdatingBundle {
 	}
 	@Test
 	public void testOnLargerJar(){
-		JarToClasses j2c = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.org.htmlparser-1.6.0.jar");
+		JarToClasses j2c = new JarToClasses("/Users/Ben/testing_bundles/com.springsource.javax.ws.rs-1.0.0.jar");
 		ArrayList<Class<?>> classes = j2c.classes;
-		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, classes);
+		JarToClasses jar = new JarToClasses("/Users/Ben/felix-framework-5.4.0/felix-cache/bundle50/version0.0/bundle.jar");
+		HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(classes, jar.classes);
 		
 		//first check
 		assertNotNull("The map contains equalities", methodEqualityMap.keySet());

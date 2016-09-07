@@ -86,27 +86,31 @@ public class MapAnalyser {
 				if(analyzedClasses.contains(clazz) || analyzedClasses.contains(clazz2))
 					continue;
 				//if(className1.equals(jarClasses2.classes.get(j).getName() )){
-				if(isClassEqual(clazz, clazz2)){	
+				//if(isClassEqual(clazz, clazz2)){	
 					//Class is equal!
 					//intersectionOfClasses.add(class1);
-					methodComparison = methodComparator(clazz, clazz2);
-					methodEqualityMap.put(clazz, methodComparison);
-					analyzedClasses.add(clazz);
-					equalClasses.add(clazz);
-					it.remove();
-					break;
-				} else if(clazz.getName().equals(clazz2.getName()) ){ //Class not equal, but names are the same
+					//methodComparison = methodComparator(clazz, clazz2);
+					//methodEqualityMap.put(clazz, methodComparison);
+					//analyzedClasses.add(clazz);
+					//equalClasses.add(clazz);
+					//it.remove();
+					//it2.remove();
+					//break;
+				//} else 
+					if(clazz.getName().equals(clazz2.getName()) ){ //Class not equal, but names are the same
 					//TODO implement subtyping, write method which checks what is not equal, if because not exists
 					//fail quickly, if type mismatch, then employ subtyping.
 					methodComparison = methodComparator(clazz, clazz2);
 					methodEqualityMap.put(clazz, methodComparison);
 					analyzedClasses.add(clazz);
+					
 					break;
 				} else if(clazz.getName().substring(clazz.getName().lastIndexOf("."))
 						.equals(clazz2.getName().substring(clazz2.getName().lastIndexOf(".")))){
 					methodComparison = methodComparator(clazz, clazz2);
 					methodEqualityMap.put(clazz,  methodComparison);
 					analyzedClasses.add(clazz);
+					
 					break;
 				}	
 			}
@@ -190,8 +194,9 @@ public class MapAnalyser {
 						analyzedMethods.add(method);
 						System.out.println("                  Method: " + method.getName()+ " was equal.");
 						equalMethods.add(method);
-						it.remove();
-						it2.remove();
+						analyzedMethods.add(method);
+						//it.remove();
+						//it2.remove();
 						break;
 					} else if(method2.getName().equals(method.getName())){
 							//if method is the same, but data types are different
@@ -208,13 +213,17 @@ public class MapAnalyser {
 									System.out.println("                  Method: " + method.getName()+ " was equal.");
 									equalMethods.add(method);
 									analyzedMethods.add(method);
-									it.remove();
-									it2.remove();
+									//it.remove();
+									//it2.remove();
 									break;
+								}
+								else{
+									continue;
+								}
 							//	} else if(areParamsEqual(parameters, parameters2) == ComparisonStatus.SUB_TYPED){
 								//	methodComparison.put(method, ComparisonStatus.SUB_TYPED);
 									//System.out.println("                  Method: " + method.getName()+ " was sub typed.");
-								}
+								
 //							} else if((returnType1.getTypeName() == returnType2.getTypeName()) && 
 //									areParamsEqual(parameters, parameters2) == ComparisonStatus.NOT_EQUAL){
 //								if(parameters.length != parameters2.length){ //Return types are the same, parameters are not the same length, not equal
@@ -241,6 +250,7 @@ public class MapAnalyser {
 					} else {
 						//Method doesn't exist...
 						//methodComparison.put(method, ComparisonStatus.NO_METHOD);
+						
 					}
 					
 				}
@@ -381,7 +391,7 @@ public class MapAnalyser {
 					}
 				}
 			}
-			if((correctTypeCount == params1.length) && (correctTypeCount ==params2.length)){
+			if((correctTypeCount >= params1.length) && (correctTypeCount >= params2.length)){
 				return ComparisonStatus.EQUAL;
 			} else  {
 				//Type mismatch? need method for type mismatch. Need to check sub typing.
