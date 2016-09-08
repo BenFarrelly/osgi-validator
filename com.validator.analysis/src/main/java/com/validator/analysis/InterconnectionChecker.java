@@ -311,7 +311,13 @@ public class InterconnectionChecker {
 //		
 //		//compare the first version number
 //		if()
+		if(temp.length == 3){
 		return temp[0] + "." + temp[1] + "." + temp[2];
+		} else if(temp.length == 2){
+			return temp[0] + "." + temp[1]; 
+		} else{
+			return temp[0];
+		}
 	}
 
 }

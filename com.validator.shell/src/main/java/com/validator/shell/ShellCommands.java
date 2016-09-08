@@ -173,7 +173,7 @@ public class ShellCommands {
 			//	ComparisonStatus serviceIsCorrect = null;
 			System.out.println();
 
-			HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(serviceClasses, classes);
+			HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(services, classes);
 			//Now to give a response regarding the results
 			Set<Class<?>> classSet = methodEqualityMap.keySet();
 			Iterator<Class<?>> classIter = classSet.iterator();
@@ -220,7 +220,7 @@ public class ShellCommands {
 					}
 				}
 			}
-			if(services.size() < tempClassSize){
+			if(failCount == 0){
 				//System.out.println("Passed validation against this service, feel free to update the bundle safely.");
 
 				try {
@@ -307,7 +307,7 @@ public class ShellCommands {
 			//						break;
 			//					}
 			//				}
-			HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(serviceClasses, classes);
+			HashMap<Class<?>, HashMap<Method, ComparisonStatus>> methodEqualityMap = MapAnalyser.updateJarAnalysis(services, classes);
 			//Now to give a response regarding the results
 			Set<Class<?>> classSet = methodEqualityMap.keySet();
 			Iterator<Class<?>> classIter = classSet.iterator();
@@ -354,7 +354,7 @@ public class ShellCommands {
 					}
 				}
 			}
-			if(services.size() <= tempClassSize){
+			if(failCount == 0){
 				//System.out.println("Passed validation against this service, feel free to update the bundle safely.");
 
 				try {
@@ -365,6 +365,7 @@ public class ShellCommands {
 					updatingBundle.start();
 					System.out.println("Bundle " + updatingBundle.getBundleId() + " has started successfully!");
 					System.out.println();
+					System.out.println("Services validated: " + services.size());
 				} catch (BundleException e) {
 					if(e.getType() == BundleException.RESOLVE_ERROR){
 						System.out.println("Resolve error, ensure you have access to all of the relevant packages the bundle is importing");
